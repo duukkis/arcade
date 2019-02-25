@@ -1,7 +1,11 @@
 # arcade
+
 Arcade of fun
 
 # shopping list
-Raspberry Pi
-Buttons
-Plywood
+
+* Raspberry Pi
+* Buttons
+* Plywood
+* Speakers
+* Led strip
