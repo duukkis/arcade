@@ -9,3 +9,8 @@ Arcade of fun
 * Plywood
 * Speakers
 * Led strip
+* Hdmi
+* Cheap monitor
+* micro usb
+* power source for raspi
+* power cabel for monitor
