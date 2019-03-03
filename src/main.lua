@@ -1,22 +1,49 @@
 
 -- in lua everything is global
 num = 1
+screen_width = 640
+screen_height = 480
+-- plumber 17 28
+plumber_x = 30
+plumber_y = 30
+debug = true
+
+
+function love.load()
+    plumber = love.graphics.newImage("images/plumber.png")
+end
 
 -- this is called all the time
 function love.draw()
-    love.graphics.print('press "a" to increase number', 200, 300)
-    love.graphics.print('press "b" to decrease number', 200, 350)
-  -- catenate string and int with ..
-    love.graphics.print('number ' .. num, 200, 400)
+    if debug then
+      love.graphics.print('w, a , s, d or arrwos you know the drill', 20, 40)
+      -- catenate string and int with ..
+      love.graphics.print('x,y ' .. plumber_x .. 'x' .. plumber_y, 20, 20)
+    end
+    love.graphics.draw(plumber, plumber_x, plumber_y)
 end
 
 
 
 function love.update(dt)
-   if love.keyboard.isDown("a") then
-      num = num + 1
+   if love.keyboard.isDown("a") or love.keyboard.isDown("left") then
+      if plumber_x > 5 then
+        plumber_x = plumber_x - 1
+      end
    end
-   if love.keyboard.isDown("b") then
-      num = num - 1
+   if love.keyboard.isDown("d") or love.keyboard.isDown("right") then
+      if plumber_x < screen_width then
+        plumber_x = plumber_x + 1
+      end
+   end
+   if love.keyboard.isDown("w") or love.keyboard.isDown("up") then
+      if plumber_y > 5 then
+        plumber_y = plumber_y - 1
+      end
+   end
+   if love.keyboard.isDown("s") or love.keyboard.isDown("down") then
+      if plumber_y < screen_height then
+        plumber_y = plumber_y + 1
+      end
    end
 end
