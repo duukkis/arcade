@@ -24,7 +24,7 @@ function love.draw()
 end
 
 function love.update(dt)
-    updateSpecs(specs)
+    updateSpecs(specs, dt)
 end
 
 function drawSpecs(specs, specImages)
@@ -33,14 +33,15 @@ function drawSpecs(specs, specImages)
     end
 end
 
-function updateSpecs(specs)
-
+function updateSpecs(specs, dt)
+    spec.yPos = spec.yPos + dt * spec.speed
 end
 
 function createSpec()
     spec = {}
-    spec.xPos = 0
-    spec.yPos = 0
+    spec.xPos = 10
+    spec.yPos = -10
+    spec.speed = 100
     spec.specImage = getColorFromNumber(math.random(3))
     return spec
 end
@@ -54,4 +55,3 @@ function getColorFromNumber(num)
         return YELLOW
     end
 end
-
