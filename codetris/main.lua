@@ -1,30 +1,57 @@
 local screen_width = 640
 local screen_height = 480
 
-local max_time = 10
-local timer_bar_height = 300
-local timer = love.timer.getTime()
+local BLUE = "blue"
+local RED = "red"
+local YELLOW = "yellow"
+
+local specs = {}
 
 function love.load()
+    math.randomseed(os.time())
     love.window.setMode(screen_width, screen_height)
+
+    specImages = {}
+    specImages[BLUE] = love.graphics.newImage("images/bleu.png")
+    specImages[RED] = love.graphics.newImage("images/rod.png")
+    specImages[YELLOW] = love.graphics.newImage("images/yello.png")
+
+    table.insert(specs, createSpec())
 end
 
 function love.draw()
-    barFiller()
+    drawSpecs(specs, specImages)
 end
 
+function love.update(dt)
+    updateSpecs(specs)
+end
 
--- draw a bar on the side to measure time
-function barFiller()
-    local now = love.timer.getTime()
-    local diff = now - timer
-
-    if diff > max_time then
-        diff = 0
-        timer = love.timer.getTime()
+function drawSpecs(specs, specImages)
+    for index, spec in ipairs(specs) do
+        love.graphics.draw(specImages[spec.specImage], spec.xPos, spec.yPos)
     end
-
-    filled = timer_bar_height * (diff / max_time)
-    love.graphics.rectangle('line', 600, 30, 30, timer_bar_height, 3)
-    love.graphics.rectangle('fill', 600, 30, 30, filled, 3)
 end
+
+function updateSpecs(specs)
+
+end
+
+function createSpec()
+    spec = {}
+    spec.xPos = 0
+    spec.yPos = 0
+    spec.specImage = getColorFromNumber(math.random(3))
+    return spec
+end
+
+function getColorFromNumber(num)
+    if num == 1 then
+        return BLUE
+    elseif num == 2 then
+        return RED
+    else
+        return YELLOW
+    end
+end
+
