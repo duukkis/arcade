@@ -19,6 +19,6 @@ Arcade of fun
 
 ## getting started
 
-1. Download Löve from https://love2d.org/#download
+1. Download Löve from [here](https://love2d.org/#download)
 2. Copy paste the binary to Applications
 3. Execute `run.sh {name of the game}`

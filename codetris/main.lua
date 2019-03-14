@@ -26,6 +26,7 @@ function love.load()
     codeImages[WRONG] = love.graphics.newImage("images/male.png")
 
     table.insert(specs, createSpec())
+    table.insert(codes, createCode(true))
 end
 
 function love.draw()
@@ -35,7 +36,14 @@ function love.draw()
 end
 
 function love.update(dt)
-    updateSpecs(specs, dt)
+    for index, spec in ipairs(specs) do
+        updateLocation(spec, dt)
+    end
+
+    for index, code in ipairs(codes) do
+        updateLocation(code, dt)
+    end
+
 end
 
 function drawSpecs(specs, specImages)
@@ -54,15 +62,17 @@ function drawImage(image, x, y)
     love.graphics.draw(image, x, y)
 end
 
-function updateSpecs(specs, dt)
-    spec.yPos = spec.yPos + dt * spec.speed
+function updateLocation(thing, dt)
+    thing.yPos = thing.yPos + dt * thing.speedY
+    thing.xPos = thing.xPos + dt * thing.speedX
 end
 
 function createSpec()
     spec = {}
     spec.xPos = 10
     spec.yPos = -10
-    spec.speed = 100
+    spec.speedY = 100
+    spec.speedX = 0
     spec.image = getColorFromNumber(math.random(3))
     return spec
 end
@@ -75,4 +85,20 @@ function getColorFromNumber(num)
     else
         return YELLOW
     end
+end
+
+function createCode(isCorrect)
+    code = {}
+    code.xPos = 10
+    code.yPos = screen_height - 32 - 10
+    code.speedY = 0
+    code.speedX = 100
+
+    if isCorrect then
+        code.image = CORRECT
+    else
+        code.image = WRONG
+    end
+
+    return code
 end
