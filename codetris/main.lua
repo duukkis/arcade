@@ -14,6 +14,8 @@ local codes = {}
 local specImages = {}
 local codeImages = {}
 
+local spawnTimer = 0
+
 function love.load()
     math.randomseed(os.time())
     love.window.setMode(screen_width, screen_height)
@@ -24,9 +26,6 @@ function love.load()
 
     codeImages[CORRECT] = love.graphics.newImage("images/bene.png")
     codeImages[WRONG] = love.graphics.newImage("images/male.png")
-
-    table.insert(specs, createSpec())
-    table.insert(codes, createCode(true))
 end
 
 function love.draw()
@@ -38,12 +37,22 @@ end
 function love.update(dt)
     for index, spec in ipairs(specs) do
         updateLocation(spec, dt)
+        if isOutOfBounds(spec) then
+            table.remove(specs, index)
+        end
     end
 
     for index, code in ipairs(codes) do
         updateLocation(code, dt)
+
     end
 
+    if spawnTimer > 0 then
+        spawnTimer = spawnTimer - dt
+    else
+        table.insert(specs, createSpec())
+        spawnTimer = 1
+    end
 end
 
 function drawSpecs(specs, specImages)
@@ -68,13 +77,13 @@ function updateLocation(thing, dt)
 end
 
 function createSpec()
-    spec = {}
-    spec.xPos = 10
-    spec.yPos = -10
-    spec.speedY = 100
-    spec.speedX = 0
-    spec.image = getColorFromNumber(math.random(3))
-    return spec
+    return {
+        xPos = 10,
+        yPos = -10,
+        speedY = 100,
+        speedX = 0,
+        image = getColorFromNumber(math.random(3))
+    }
 end
 
 function getColorFromNumber(num)
@@ -88,12 +97,12 @@ function getColorFromNumber(num)
 end
 
 function createCode(isCorrect)
-    code = {}
-    code.xPos = 10
-    code.yPos = screen_height - 32 - 10
-    code.speedY = 0
-    code.speedX = 100
-
+    code = {
+        xPos = 10,
+        yPos = screen_height - 32 - 10,
+        speedY = 0,
+        speedX = 100
+    }
     if isCorrect then
         code.image = CORRECT
     else
@@ -101,4 +110,8 @@ function createCode(isCorrect)
     end
 
     return code
+end
+
+function isOutOfBounds(spec)
+    return spec.yPos > screen_height - 32
 end

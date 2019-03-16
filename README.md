@@ -6,9 +6,11 @@ Arcade of fun
 
 * Raspberry Pi
 * Buttons ✅
+* Joysticks ✅
+* Switches
+* Potentiometers
 * Plywood
-* Speakers
-* Amplifier
+* Active speakers
 * Led strip
 * Hdmi
 * Cheap monitor (preferably CRT)
