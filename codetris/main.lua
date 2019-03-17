@@ -39,12 +39,12 @@ function love.update(dt)
         updateLocation(spec, dt)
         if isOutOfBounds(spec) then
             table.remove(specs, index)
+            table.insert(codes, createCode(false))
         end
     end
 
     for index, code in ipairs(codes) do
         updateLocation(code, dt)
-
     end
 
     if spawnTimer > 0 then
@@ -52,6 +52,20 @@ function love.update(dt)
     else
         table.insert(specs, createSpec())
         spawnTimer = 1
+    end
+end
+
+function love.keypressed(key)
+    if key == "z" then
+        handleCoding(BLUE, specs)
+    end
+
+    if key == "x" then
+        handleCoding(RED, specs)
+    end
+
+    if key == "c" then
+        handleCoding(YELLOW, specs)
     end
 end
 
@@ -97,21 +111,33 @@ function getColorFromNumber(num)
 end
 
 function createCode(isCorrect)
-    code = {
+    local correctness = WRONG
+
+    if isCorrect then
+        correctness = CORRECT
+    end
+
+    return {
         xPos = 10,
         yPos = screen_height - 32 - 10,
         speedY = 0,
-        speedX = 100
+        speedX = 100,
+        image = correctness
     }
-    if isCorrect then
-        code.image = CORRECT
-    else
-        code.image = WRONG
-    end
-
-    return code
 end
 
 function isOutOfBounds(spec)
     return spec.yPos > screen_height - 32
+end
+
+function handleCoding(color, specs)
+    for index, spec in ipairs(specs) do -- aargh!
+        if color == spec.image then
+            table.insert(codes, createCode(true))
+        else
+            table.insert(codes, createCode(false))
+        end
+        table.remove(specs, index)
+        break
+    end
 end
