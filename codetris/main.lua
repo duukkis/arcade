@@ -26,6 +26,8 @@ function love.load()
 
     codeImages[CORRECT] = love.graphics.newImage("images/bene.png")
     codeImages[WRONG] = love.graphics.newImage("images/male.png")
+
+    guy = love.graphics.newImage("images/old-guy.png")
 end
 
 function love.draw()
@@ -34,6 +36,8 @@ function love.draw()
 
     drawSpecs(specs, specImages)
     drawCodes(codes, codeImages)
+
+    drawImage(guy, 0, screen_height - 30)
 end
 
 function love.update(dt)
