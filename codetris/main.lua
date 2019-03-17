@@ -30,6 +30,8 @@ end
 
 function love.draw()
     love.graphics.print('z = blue, x = red, c = yellow', 200, 40)
+    love.graphics.print('space = reject errornous', 200, 60)
+
     drawSpecs(specs, specImages)
     drawCodes(codes, codeImages)
 end
@@ -45,6 +47,10 @@ function love.update(dt)
 
     for index, code in ipairs(codes) do
         updateLocation(code, dt)
+        if isOutOfBounds(code) then
+            table.remove(code, index)
+        end
+
     end
 
     if spawnTimer > 0 then
@@ -67,6 +73,11 @@ function love.keypressed(key)
     if key == "c" then
         handleCoding(YELLOW, specs)
     end
+
+    if key == "space" then
+        handleReject(codes)
+    end
+
 end
 
 function drawSpecs(specs, specImages)
@@ -96,7 +107,9 @@ function createSpec()
         yPos = -10,
         speedY = 100,
         speedX = 0,
-        image = getColorFromNumber(math.random(3))
+        image = getColorFromNumber(math.random(3)),
+        width = 32,
+        height = 32
     }
 end
 
@@ -122,12 +135,15 @@ function createCode(isCorrect)
         yPos = screen_height - 32 - 10,
         speedY = 0,
         speedX = 100,
-        image = correctness
+        image = correctness,
+        width = 32,
+        height = 32
     }
 end
 
-function isOutOfBounds(spec)
-    return spec.yPos > screen_height - 32
+function isOutOfBounds(thing)
+    return thing.yPos > screen_height - thing.height or
+            thing.xPos > screen_width
 end
 
 function handleCoding(color, specs)
@@ -138,6 +154,15 @@ function handleCoding(color, specs)
             table.insert(codes, createCode(false))
         end
         table.remove(specs, index)
+        break
+    end
+end
+
+function handleReject(codes)
+    for index, code in ipairs(codes) do -- aargh!
+        if WRONG == code.image then
+            table.remove(codes, index)
+        end
         break
     end
 end
