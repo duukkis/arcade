@@ -52,7 +52,7 @@ function love.update(dt)
     for index, code in ipairs(codes) do
         updateLocation(code, dt)
         if isOutOfBounds(code) then
-            table.remove(code, index)
+            table.remove(codes, index)
         end
 
     end
