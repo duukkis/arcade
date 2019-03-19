@@ -196,39 +196,32 @@ function isOutOfBounds(thing)
 end
 
 function handleCoding(color, specs, resultCodes, direction)
-    for index, spec in ipairs(specs) do -- aargh!
-        if color == spec.image then
-            table.insert(resultCodes, createCode(true, direction))
-        else
-            table.insert(resultCodes, createCode(false, direction))
-        end
-        table.remove(specs, index)
-        break
+    if color == specs[1].image then
+        table.insert(resultCodes, createCode(true, direction))
+    else
+        table.insert(resultCodes, createCode(false, direction))
     end
+    table.remove(specs, 1)
 end
 
 function handleReject(codes)
-    for index, code in ipairs(codes) do -- aargh!
-        if WRONG == code.image then
-            table.remove(codes, index)
-        end
-        break
+    if codes[1].image == WRONG then
+        table.remove(codes, 1)
     end
 end
 
-function combineTables(t1, t2)
+function combineTables(table1, table2)
     combined = {}
-    for k, value in ipairs(t1) do
+    for k, value in ipairs(table1) do
         table.insert(combined, value)
     end
 
-    for k, value in ipairs(t2) do
+    for k, value in ipairs(table2) do
         table.insert(combined, value)
     end
 
     return combined
 end
-
 
 function drawInstructions()
     love.graphics.print('player 1', 200, 20)
