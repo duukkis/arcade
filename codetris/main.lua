@@ -36,7 +36,7 @@ function love.load()
     codeImages[CORRECT] = love.graphics.newImage("images/bene.png")
     codeImages[WRONG] = love.graphics.newImage("images/antibene.png")
 
-    guy = love.graphics.newImage("images/old-guy.png")
+    playerImage = love.graphics.newImage("images/sviluppatore.png")
 end
 
 function love.draw()
@@ -46,8 +46,8 @@ function love.draw()
     drawThings(combineTables(player1Specs, player2Specs), specImages)
     drawThings(combineTables(player1Codes, player2Codes), codeImages)
 
-    drawImage(guy, 10, screenHeight - 30)
-    drawImage(guy, screenWidth - 10, screenHeight - 30, 0, -1)
+    drawImage(playerImage, 10, screenHeight - 30)
+    drawImage(playerImage, screenWidth - 10, screenHeight - 30, 0, -1)
 end
 
 function love.update(dt)
@@ -196,6 +196,9 @@ function isOutOfBounds(thing)
 end
 
 function handleCoding(color, specs, resultCodes, direction)
+    if #specs == 0 then
+        return
+    end
     if color == specs[1].image then
         table.insert(resultCodes, createCode(true, direction))
     else
@@ -205,7 +208,7 @@ function handleCoding(color, specs, resultCodes, direction)
 end
 
 function handleReject(codes)
-    if codes[1].image == WRONG then
+    if #codes > 0 and codes[1].image == WRONG then
         table.remove(codes, 1)
     end
 end
@@ -233,7 +236,7 @@ function drawInstructions()
     love.graphics.print('k = reject errornous', 200, 140)
 end
 
-function drawScoreboard(eka, toka)
-    love.graphics.print('Implemented ' .. eka, 200, 180)
-    love.graphics.print('Bugs ' .. toka, 200, 200)
+function drawScoreboard(implemented, bugs)
+    love.graphics.print('Implemented ' .. implemented, 200, 180)
+    love.graphics.print('Bugs ' .. bugs, 200, 200)
 end
