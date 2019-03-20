@@ -21,17 +21,19 @@ local codeImages = {}
 
 local spawnTimer = 0
 
-local correctlyImplemented = 0
-local bugsInProduction = 0
+local scores = {
+    implemented = 0,
+    bugs = 0
+}
 
 function love.load()
     math.randomseed(os.time())
     love.window.setMode(screenWidth, screenHeight)
     love.window.setTitle("ⓒⓞⓓⓔⓣⓡⓘⓢ")
 
-    specImages[BLUE] = love.graphics.newImage("images/bleu.png")
-    specImages[RED] = love.graphics.newImage("images/rod.png")
-    specImages[YELLOW] = love.graphics.newImage("images/yello.png")
+    specImages[BLUE] = love.graphics.newImage("images/azzurro.png")
+    specImages[RED] = love.graphics.newImage("images/rosso.png")
+    specImages[YELLOW] = love.graphics.newImage("images/giallo.png")
 
     codeImages[CORRECT] = love.graphics.newImage("images/bene.png")
     codeImages[WRONG] = love.graphics.newImage("images/antibene.png")
@@ -41,7 +43,7 @@ end
 
 function love.draw()
     drawInstructions()
-    drawScoreboard(correctlyImplemented, bugsInProduction)
+    drawScoreboard(scores)
 
     drawThings(combineTables(player1Specs, player2Specs), specImages)
     drawThings(combineTables(player1Codes, player2Codes), codeImages)
@@ -128,9 +130,9 @@ function moveCodes(codes, dt)
         updateLocation(code, dt)
         if isOutOfBounds(code) then
             if code.image == CORRECT then
-                correctlyImplemented = correctlyImplemented + 1
+                scores.implemented = scores.implemented + 1
             else
-                bugsInProduction = bugsInProduction + 1
+                scores.bugs = scores.bugs + 1
             end
 
             table.remove(codes, index)
@@ -208,7 +210,7 @@ function handleCoding(color, specs, resultCodes, direction)
 end
 
 function handleReject(codes)
-    if #codes > 0 and codes[1].image == WRONG then
+    if #codes > 0 then
         table.remove(codes, 1)
     end
 end
@@ -229,14 +231,14 @@ end
 function drawInstructions()
     love.graphics.print('player 1', 200, 20)
     love.graphics.print('z = blue, x = red, c = yellow', 200, 40)
-    love.graphics.print('a = reject errornous', 200, 60)
+    love.graphics.print('a = reject', 200, 60)
 
     love.graphics.print('player 2', 200, 100)
     love.graphics.print('b = blue, n = red, m = yellow', 200, 120)
-    love.graphics.print('k = reject errornous', 200, 140)
+    love.graphics.print('k = reject', 200, 140)
 end
 
-function drawScoreboard(implemented, bugs)
-    love.graphics.print('Implemented ' .. implemented, 200, 180)
-    love.graphics.print('Bugs ' .. bugs, 200, 200)
+function drawScoreboard(scores)
+    love.graphics.print('Implemented ' .. scores.implemented, 200, 180)
+    love.graphics.print('Bugs ' .. scores.bugs, 200, 200)
 end
