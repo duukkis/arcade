@@ -11,6 +11,9 @@ local TO_LEFT = -1
 local CORRECT = "correct"
 local WRONG = "wrong"
 
+local PLAYER_POS = 100
+local TILE_DIMENSION = 32
+
 local player1Specs = {}
 local player2Specs = {}
 local player1Codes = {}
@@ -48,8 +51,8 @@ function love.draw()
     drawThings(combineTables(player1Specs, player2Specs), specImages)
     drawThings(combineTables(player1Codes, player2Codes), codeImages)
 
-    drawImage(playerImage, 10, screenHeight - 55)
-    drawImage(playerImage, screenWidth - 10, screenHeight - 55, 0, -1)
+    drawImage(playerImage, 10, screenHeight - 55 - PLAYER_POS)
+    drawImage(playerImage, screenWidth - 10, screenHeight - 55 - PLAYER_POS, 0, -1)
 end
 
 function love.update(dt)
@@ -118,7 +121,7 @@ end
 function moveSpecs(specs, resultCodes, dt, direction)
     for index, spec in ipairs(specs) do
         updateLocation(spec, dt)
-         if isOutOfBounds(spec) then
+         if isNoMoreCodable(spec) then
             table.remove(specs, index)
             table.insert(resultCodes, createCode(false, direction))
         end
@@ -152,8 +155,8 @@ function createSpec(xPos)
         speedY = 100,
         speedX = 0,
         image = getColorFromNumber(math.random(3)),
-        width = 32,
-        height = 32
+        width = TILE_DIMENSION,
+        height = TILE_DIMENSION
     }
 end
 
@@ -176,10 +179,10 @@ function createCode(isCorrect, direction)
 
     if direction == TO_RIGHT then
         xPos = 10
-        yPos = screenHeight - 32 - 10
+        yPos = screenHeight - TILE_DIMENSION - 10 - PLAYER_POS
     else
         xPos = screenWidth - 10
-        yPos = screenHeight - 32 - 42
+        yPos = screenHeight - TILE_DIMENSION - 42 - PLAYER_POS
     end
 
     return {
@@ -188,14 +191,18 @@ function createCode(isCorrect, direction)
         speedY = 0,
         speedX = 100 * direction,
         image = correctness,
-        width = 32,
-        height = 32
+        width = TILE_DIMENSION,
+        height = TILE_DIMENSION
     }
 end
 
+function isNoMoreCodable(thing)
+    return thing.yPos > screenHeight - PLAYER_POS - 54
+end
+
+
 function isOutOfBounds(thing)
-    return thing.yPos > screenHeight - thing.height or
-            thing.xPos < 0 or
+    return  thing.xPos < 0 or
             thing.xPos > screenWidth
 end
 
