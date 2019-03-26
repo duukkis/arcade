@@ -48,8 +48,8 @@ function love.draw()
     drawThings(combineTables(player1Specs, player2Specs), specImages)
     drawThings(combineTables(player1Codes, player2Codes), codeImages)
 
-    drawImage(playerImage, 10, screenHeight - 30)
-    drawImage(playerImage, screenWidth - 10, screenHeight - 30, 0, -1)
+    drawImage(playerImage, 10, screenHeight - 55)
+    drawImage(playerImage, screenWidth - 10, screenHeight - 55, 0, -1)
 end
 
 function love.update(dt)
@@ -81,7 +81,7 @@ function love.keypressed(key)
         handleCoding(YELLOW, player1Specs, player2Codes, TO_RIGHT)
     end
 
-    if key == "a" then
+    if key == "lshift" then
         handleReject(player1Codes)
     end
 
@@ -97,7 +97,7 @@ function love.keypressed(key)
         handleCoding(YELLOW, player2Specs, player1Codes, TO_LEFT)
     end
 
-    if key == "k" then
+    if key == "rshift" then
         handleReject(player2Codes)
     end
 end
@@ -176,13 +176,15 @@ function createCode(isCorrect, direction)
 
     if direction == TO_RIGHT then
         xPos = 10
+        yPos = screenHeight - 32 - 10
     else
         xPos = screenWidth - 10
+        yPos = screenHeight - 32 - 42
     end
 
     return {
         xPos = xPos,
-        yPos = screenHeight - 32 - 10,
+        yPos = yPos,
         speedY = 0,
         speedX = 100 * direction,
         image = correctness,
@@ -231,11 +233,11 @@ end
 function drawInstructions()
     love.graphics.print('player 1', 200, 20)
     love.graphics.print('z = blue, x = red, c = yellow', 200, 40)
-    love.graphics.print('a = reject', 200, 60)
+    love.graphics.print('lshift = reject', 200, 60)
 
     love.graphics.print('player 2', 200, 100)
     love.graphics.print('b = blue, n = red, m = yellow', 200, 120)
-    love.graphics.print('k = reject', 200, 140)
+    love.graphics.print('rshift = reject', 200, 140)
 end
 
 function drawScoreboard(scores)
