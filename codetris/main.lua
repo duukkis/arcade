@@ -1,5 +1,5 @@
-local screenWidth = 640
-local screenHeight = 480
+local SCREEN_WIDTH = 640
+local SCREEN_HEIGHT = 480
 
 local BLUE = "blue"
 local RED = "red"
@@ -11,8 +11,8 @@ local TO_LEFT = -1
 local CORRECT = "correct"
 local WRONG = "wrong"
 
-local PLAYER_POS = 100
 local TILE_DIMENSION = 32
+local PLAYER_BASELINE = SCREEN_HEIGHT - 150
 
 local player1Specs = {}
 local player2Specs = {}
@@ -31,7 +31,7 @@ local scores = {
 
 function love.load()
     math.randomseed(os.time())
-    love.window.setMode(screenWidth, screenHeight)
+    love.window.setMode(SCREEN_WIDTH, SCREEN_HEIGHT)
     love.window.setTitle("ⓒⓞⓓⓔⓣⓡⓘⓢ")
 
     specImages[BLUE] = love.graphics.newImage("images/azzurro.png")
@@ -51,8 +51,8 @@ function love.draw()
     drawThings(combineTables(player1Specs, player2Specs), specImages)
     drawThings(combineTables(player1Codes, player2Codes), codeImages)
 
-    drawImage(playerImage, 10, screenHeight - 55 - PLAYER_POS)
-    drawImage(playerImage, screenWidth - 10, screenHeight - 55 - PLAYER_POS, 0, -1)
+    drawImage(playerImage, 10, PLAYER_BASELINE)
+    drawImage(playerImage, SCREEN_WIDTH - 10, PLAYER_BASELINE, 0, -1)
 end
 
 function love.update(dt)
@@ -66,7 +66,7 @@ function love.update(dt)
         spawnTimer = spawnTimer - dt
     else
         table.insert(player1Specs, createSpec(10))
-        table.insert(player2Specs, createSpec(screenWidth - 40))
+        table.insert(player2Specs, createSpec(SCREEN_WIDTH - 40))
         spawnTimer = 1
     end
 end
@@ -179,10 +179,10 @@ function createCode(isCorrect, direction)
 
     if direction == TO_RIGHT then
         xPos = 10
-        yPos = screenHeight - TILE_DIMENSION - 10 - PLAYER_POS
+        yPos = PLAYER_BASELINE
     else
-        xPos = screenWidth - 10
-        yPos = screenHeight - TILE_DIMENSION - 42 - PLAYER_POS
+        xPos = SCREEN_WIDTH - 10
+        yPos = PLAYER_BASELINE + TILE_DIMENSION
     end
 
     return {
@@ -197,13 +197,13 @@ function createCode(isCorrect, direction)
 end
 
 function isNoMoreCodable(thing)
-    return thing.yPos > screenHeight - PLAYER_POS - 54
+    return thing.yPos > PLAYER_BASELINE
 end
 
 
 function isOutOfBounds(thing)
     return  thing.xPos < 0 or
-            thing.xPos > screenWidth
+            thing.xPos > SCREEN_WIDTH
 end
 
 function handleCoding(color, specs, resultCodes, direction)
