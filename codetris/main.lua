@@ -11,13 +11,16 @@ local TO_LEFT = -1
 local CORRECT = "correct"
 local WRONG = "wrong"
 
+local CODES_IN_PROD_DISPLAY_SIZE = 5
+
 local TILE_DIMENSION = 32
-local PLAYER_BASELINE = SCREEN_HEIGHT - 150
+local PLAYER_BASELINE = SCREEN_HEIGHT - 170
 
 local player1Specs = {}
 local player2Specs = {}
 local player1Codes = {}
 local player2Codes = {}
+local codesInProd = {}
 
 local specImages = {}
 local codeImages = {}
@@ -47,6 +50,7 @@ end
 function love.draw()
     drawInstructions()
     drawScoreboard(scores)
+    drawProd(codesInProd, codeImages)
 
     drawThings(combineTables(player1Specs, player2Specs), specImages)
     drawThings(combineTables(player1Codes, player2Codes), codeImages)
@@ -106,7 +110,7 @@ function love.keypressed(key)
 end
 
 function drawThings(things, thingImages)
-    for index, thing in ipairs(things) do
+    for _, thing in ipairs(things) do
         drawImage(thingImages[thing.image], thing.xPos, thing.yPos)
     end
 end
@@ -132,12 +136,7 @@ function moveCodes(codes, dt)
     for index, code in ipairs(codes) do
         updateLocation(code, dt)
         if isOutOfBounds(code) then
-            if code.image == CORRECT then
-                scores.implemented = scores.implemented + 1
-            else
-                scores.bugs = scores.bugs + 1
-            end
-
+            publishtoProd(code.image, codesInProd, scores)
             table.remove(codes, index)
         end
     end
@@ -200,7 +199,6 @@ function isNoMoreCodable(thing)
     return thing.yPos > PLAYER_BASELINE
 end
 
-
 function isOutOfBounds(thing)
     return  thing.xPos < 0 or
             thing.xPos > SCREEN_WIDTH
@@ -226,11 +224,11 @@ end
 
 function combineTables(table1, table2)
     combined = {}
-    for k, value in ipairs(table1) do
+    for _, value in ipairs(table1) do
         table.insert(combined, value)
     end
 
-    for k, value in ipairs(table2) do
+    for _, value in ipairs(table2) do
         table.insert(combined, value)
     end
 
@@ -250,4 +248,24 @@ end
 function drawScoreboard(scores)
     love.graphics.print('Implemented ' .. scores.implemented, 200, 180)
     love.graphics.print('Bugs ' .. scores.bugs, 200, 200)
+end
+
+function publishtoProd(isCorrect, codesInProd, scores)
+    if isCorrect == CORRECT then
+        scores.implemented = scores.implemented + 1
+    else
+        scores.bugs = scores.bugs + 1
+    end
+
+    table.insert(codesInProd, isCorrect)
+    if #codesInProd > CODES_IN_PROD_DISPLAY_SIZE then
+        table.remove(codesInProd, 1)
+    end
+end
+
+function drawProd(codesInProd, images)
+     for i = #codesInProd, 1, -1 do
+        xPos = 450 - i * (TILE_DIMENSION + 10)
+        drawImage(images[codesInProd[i]], xPos, SCREEN_HEIGHT - 40)
+     end
 end
