@@ -16,10 +16,18 @@ local CODES_IN_PROD_DISPLAY_SIZE = 5
 local TILE_DIMENSION = 32
 local PLAYER_BASELINE = SCREEN_HEIGHT - 170
 
-local player1Specs = {}
-local player2Specs = {}
-local player1Codes = {}
-local player2Codes = {}
+local player1 = {
+    specs = {},
+    codes = {},
+    codingDirection = TO_RIGHT
+}
+
+local player2 = {
+    specs = {},
+    codes = {},
+    codingDirection = TO_LEFT
+}
+
 local codesInProd = {}
 
 local specImages = {}
@@ -52,60 +60,60 @@ function love.draw()
     drawScoreboard(scores)
     drawProd(codesInProd, codeImages)
 
-    drawThings(combineTables(player1Specs, player2Specs), specImages)
-    drawThings(combineTables(player1Codes, player2Codes), codeImages)
+    drawThings(combineTables(player1.specs, player2.specs), specImages)
+    drawThings(combineTables(player1.codes, player2.codes), codeImages)
 
     drawImage(playerImage, 10, PLAYER_BASELINE)
     drawImage(playerImage, SCREEN_WIDTH - 10, PLAYER_BASELINE, 0, -1)
 end
 
 function love.update(dt)
-    moveSpecs(player1Specs, player2Codes, dt, TO_RIGHT)
-    moveSpecs(player2Specs, player1Codes, dt, TO_LEFT)
+    moveSpecs(player1.specs, player2.codes, dt, TO_RIGHT)
+    moveSpecs(player2.specs, player1.codes, dt, TO_LEFT)
 
-    moveCodes(player1Codes, dt)
-    moveCodes(player2Codes, dt)
+    moveCodes(player1.codes, dt)
+    moveCodes(player2.codes, dt)
 
     if spawnTimer > 0 then
         spawnTimer = spawnTimer - dt
     else
-        table.insert(player1Specs, createSpec(10))
-        table.insert(player2Specs, createSpec(SCREEN_WIDTH - 40))
+        table.insert(player1.specs, createSpec(10))
+        table.insert(player2.specs, createSpec(SCREEN_WIDTH - 40))
         spawnTimer = 1
     end
 end
 
 function love.keypressed(key)
     if key == "z" then
-        handleCoding(BLUE, player1Specs, player2Codes, TO_RIGHT)
+        handleCoding(BLUE, player1, player2)
     end
 
     if key == "x" then
-        handleCoding(RED, player1Specs, player2Codes, TO_RIGHT)
+        handleCoding(RED, player1, player2)
     end
 
     if key == "c" then
-        handleCoding(YELLOW, player1Specs, player2Codes, TO_RIGHT)
+        handleCoding(YELLOW, player1, player2)
     end
 
     if key == "lshift" then
-        handleReject(player1Codes)
+        handleReject(player1.codes)
     end
 
     if key == "b" then
-        handleCoding(BLUE, player2Specs, player1Codes, TO_LEFT)
+        handleCoding(BLUE, player2, player1)
     end
 
     if key == "n" then
-        handleCoding(RED, player2Specs, player1Codes, TO_LEFT)
+        handleCoding(RED, player2, player1)
     end
 
     if key == "m" then
-        handleCoding(YELLOW, player2Specs, player1Codes, TO_LEFT)
+        handleCoding(YELLOW, player2, player1)
     end
 
     if key == "rshift" then
-        handleReject(player2Codes)
+        handleReject(player2.codes)
     end
 end
 
@@ -204,16 +212,17 @@ function isOutOfBounds(thing)
             thing.xPos > SCREEN_WIDTH
 end
 
-function handleCoding(color, specs, resultCodes, direction)
-    if #specs == 0 then
+function handleCoding(color, coder, reviewer)
+    if table.getn(coder.specs) == 0 then
         return
     end
-    if color == specs[1].image then
-        table.insert(resultCodes, createCode(true, direction))
+
+    if color == coder.specs[1].image then
+        table.insert(reviewer.codes, createCode(true, coder.codingDirection))
     else
-        table.insert(resultCodes, createCode(false, direction))
+        table.insert(reviewer.codes, createCode(false, coder.codingDirection))
     end
-    table.remove(specs, 1)
+    table.remove(coder.specs, 1)
 end
 
 function handleReject(codes)
