@@ -78,7 +78,7 @@ function love.update(dt)
         spawnTimer = spawnTimer - dt
     else
         table.insert(player1.specs, createSpec(10))
-        table.insert(player2.specs, createSpec(SCREEN_WIDTH - 40))
+        table.insert(player2.specs, createSpec(SCREEN_WIDTH - TILE_DIMENSION - 10))
         spawnTimer = 1
     end
 end
@@ -245,13 +245,14 @@ function combineTables(table1, table2)
 end
 
 function drawInstructions()
-    love.graphics.print('player 1', 200, 20)
-    love.graphics.print('z = blue, x = red, c = yellow', 200, 40)
-    love.graphics.print('lshift = reject', 200, 60)
+    local leftPadding = 200
+    love.graphics.print('player 1', leftPadding, 20)
+    love.graphics.print('z = blue, x = red, c = yellow', leftPadding, 40)
+    love.graphics.print('lshift = reject', leftPadding, 60)
 
-    love.graphics.print('player 2', 200, 100)
-    love.graphics.print('b = blue, n = red, m = yellow', 200, 120)
-    love.graphics.print('rshift = reject', 200, 140)
+    love.graphics.print('player 2', leftPadding, 100)
+    love.graphics.print('b = blue, n = red, m = yellow', leftPadding, 120)
+    love.graphics.print('rshift = reject', leftPadding, 140)
 end
 
 function drawScoreboard(scores)
