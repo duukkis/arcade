@@ -68,11 +68,11 @@ function love.draw()
 end
 
 function love.update(dt)
-    moveSpecs(player1.specs, player2.codes, dt, TO_RIGHT)
-    moveSpecs(player2.specs, player1.codes, dt, TO_LEFT)
+    moveSpecs(player1, player2, dt)
+    moveSpecs(player2, player1, dt)
 
-    moveCodes(player1.codes, dt)
-    moveCodes(player2.codes, dt)
+    moveCodes(player1, dt)
+    moveCodes(player2, dt)
 
     if spawnTimer > 0 then
         spawnTimer = spawnTimer - dt
@@ -97,7 +97,7 @@ function love.keypressed(key)
     end
 
     if key == "lshift" then
-        handleReject(player1.codes)
+        handleReject(player1)
     end
 
     if key == "b" then
@@ -113,7 +113,7 @@ function love.keypressed(key)
     end
 
     if key == "rshift" then
-        handleReject(player2.codes)
+        handleReject(player2)
     end
 end
 
@@ -130,22 +130,22 @@ function drawImage(image, x, y, r, sx, sy)
     love.graphics.draw(image, x, y, r, sx, sy)
 end
 
-function moveSpecs(specs, resultCodes, dt, direction)
-    for index, spec in ipairs(specs) do
+function moveSpecs(coder, reviewer, dt)
+    for index, spec in ipairs(coder.specs) do
         updateLocation(spec, dt)
          if isNoMoreCodable(spec) then
-            table.remove(specs, index)
-            table.insert(resultCodes, createCode(false, direction))
+            table.remove(coder.specs, index)
+            table.insert(reviewer.codes, createCode(false, coder.codingDirection))
         end
     end
 end
 
-function moveCodes(codes, dt)
-    for index, code in ipairs(codes) do
+function moveCodes(coder, dt)
+    for index, code in ipairs(coder.codes) do
         updateLocation(code, dt)
         if isOutOfBounds(code) then
             publishtoProd(code.image, codesInProd, scores)
-            table.remove(codes, index)
+            table.remove(coder.codes, index)
         end
     end
 end
@@ -222,12 +222,13 @@ function handleCoding(color, coder, reviewer)
     else
         table.insert(reviewer.codes, createCode(false, coder.codingDirection))
     end
+
     table.remove(coder.specs, 1)
 end
 
-function handleReject(codes)
-    if #codes > 0 then
-        table.remove(codes, 1)
+function handleReject(player)
+    if table.getn(player.codes) > 0 then
+        table.remove(player.codes, 1)
     end
 end
 
