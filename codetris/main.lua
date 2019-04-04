@@ -16,24 +16,26 @@ local CODES_IN_PROD_DISPLAY_SIZE = 5
 local TILE_DIMENSION = 32
 local PLAYER_BASELINE = SCREEN_HEIGHT - 170
 
+local SPAWN_SEQUENCE_DELAY_SEC= 1
+
 local player1 = {
     specs = {},
     codes = {},
-    codingDirection = TO_RIGHT
+    codingDirection = TO_RIGHT,
+    spawnTimer = 0
 }
 
 local player2 = {
     specs = {},
     codes = {},
-    codingDirection = TO_LEFT
+    codingDirection = TO_LEFT,
+    spawnTimer = 0
 }
 
 local codesInProd = {}
 
 local specImages = {}
 local codeImages = {}
-
-local spawnTimer = 0
 
 local scores = {
     implemented = 0,
@@ -74,13 +76,8 @@ function love.update(dt)
     moveCodes(player1, dt)
     moveCodes(player2, dt)
 
-    if spawnTimer > 0 then
-        spawnTimer = spawnTimer - dt
-    else
-        table.insert(player1.specs, createSpec(10))
-        table.insert(player2.specs, createSpec(SCREEN_WIDTH - TILE_DIMENSION - 10))
-        spawnTimer = 1
-    end
+    adjustTimerAndSpawnIfNeeded(player1, 10, dt)
+    adjustTimerAndSpawnIfNeeded(player2, SCREEN_WIDTH - TILE_DIMENSION - 10, dt)
 end
 
 function love.keypressed(key)
@@ -147,6 +144,15 @@ function moveCodes(coder, dt)
             publishtoProd(code.image, codesInProd, scores)
             table.remove(coder.codes, index)
         end
+    end
+end
+
+function adjustTimerAndSpawnIfNeeded(player, location, dt)
+    if player.spawnTimer > 0 then
+        player.spawnTimer = player.spawnTimer - dt
+    else
+        table.insert(player.specs, createSpec(location))
+        player.spawnTimer = SPAWN_SEQUENCE_DELAY_SEC
     end
 end
 
@@ -224,6 +230,7 @@ function handleCoding(color, coder, reviewer)
     end
 
     table.remove(coder.specs, 1)
+    coder.spawnTimer = SPAWN_SEQUENCE_DELAY_SEC / 3
 end
 
 function handleReject(player)
