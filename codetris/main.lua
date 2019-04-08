@@ -4,6 +4,7 @@ local SCREEN_HEIGHT = 480
 local BLUE = "blue"
 local RED = "red"
 local YELLOW = "yellow"
+local COLOR_COUNT = 3
 
 local TO_RIGHT = 1
 local TO_LEFT = -1
@@ -19,14 +20,22 @@ local PLAYER_BASELINE = SCREEN_HEIGHT - 170
 local SPAWN_SEQUENCE_DELAY_SEC= 1
 
 local player1 = {
-    specs = {},
+    specs = {
+        blue = {},
+        red = {},
+        yellow = {}
+    },
     codes = {},
     codingDirection = TO_RIGHT,
     spawnTimer = 0
 }
 
 local player2 = {
-    specs = {},
+    specs = {
+        blue = {},
+        red = {},
+        yellow = {}
+    },
     codes = {},
     codingDirection = TO_LEFT,
     spawnTimer = 0
@@ -62,11 +71,13 @@ function love.draw()
     drawScoreboard(scores)
     drawProd(codesInProd, codeImages)
 
-    drawThings(combineTables(player1.specs, player2.specs), specImages)
+    drawThings(combineTables(player1.specs[BLUE], player1.specs[RED], player1.specs[YELLOW],
+                            player2.specs[BLUE], player2.specs[RED], player2.specs[YELLOW]),
+                            specImages)
     drawThings(combineTables(player1.codes, player2.codes), codeImages)
 
-    drawImage(playerImage, 10, PLAYER_BASELINE)
-    drawImage(playerImage, SCREEN_WIDTH - 10, PLAYER_BASELINE, 0, -1)
+    drawImage(playerImage, 26, PLAYER_BASELINE)
+    drawImage(playerImage, SCREEN_WIDTH - 26, PLAYER_BASELINE, 0, -1)
 end
 
 function love.update(dt)
@@ -76,8 +87,8 @@ function love.update(dt)
     moveCodes(player1, dt)
     moveCodes(player2, dt)
 
-    adjustTimerAndSpawnIfNeeded(player1, 10, dt)
-    adjustTimerAndSpawnIfNeeded(player2, SCREEN_WIDTH - TILE_DIMENSION - 10, dt)
+    spawnSpecIfTimeIsRight(player1, 10, dt)
+    spawnSpecIfTimeIsRight(player2, SCREEN_WIDTH - (3 * TILE_DIMENSION) - 10, dt)
 end
 
 function love.keypressed(key)
@@ -128,11 +139,14 @@ function drawImage(image, x, y, r, sx, sy)
 end
 
 function moveSpecs(coder, reviewer, dt)
-    for index, spec in ipairs(coder.specs) do
-        updateLocation(spec, dt)
-         if isNoMoreCodable(spec) then
-            table.remove(coder.specs, index)
-            table.insert(reviewer.codes, createCode(false, coder.codingDirection))
+    for i=1, COLOR_COUNT, 1 do
+        indexColor = getColorFromNumber(i)
+        for index, spec in ipairs(coder.specs[indexColor]) do
+            updateLocation(spec, dt)
+            if isNoMoreCodable(spec) then
+                table.remove(coder.specs[indexColor], index)
+                table.insert(reviewer.codes, createCode(false, coder.codingDirection))
+            end
         end
     end
 end
@@ -147,11 +161,11 @@ function moveCodes(coder, dt)
     end
 end
 
-function adjustTimerAndSpawnIfNeeded(player, location, dt)
+function spawnSpecIfTimeIsRight(player, location, dt)
     if player.spawnTimer > 0 then
         player.spawnTimer = player.spawnTimer - dt
     else
-        table.insert(player.specs, createSpec(location))
+        createSpec(player, location)
         player.spawnTimer = SPAWN_SEQUENCE_DELAY_SEC
     end
 end
@@ -161,16 +175,20 @@ function updateLocation(thing, dt)
     thing.xPos = thing.xPos + dt * thing.speedX
 end
 
-function createSpec(xPos)
-    return {
-        xPos = xPos,
+function createSpec(player, xPos)
+    colorIndex = math.random(COLOR_COUNT)
+    color = getColorFromNumber(colorIndex)
+    spec = {
+        xPos = xPos + colorIndex * TILE_DIMENSION - TILE_DIMENSION,
         yPos = -10,
         speedY = 100,
         speedX = 0,
-        image = getColorFromNumber(math.random(3)),
+        image = color,
         width = TILE_DIMENSION,
         height = TILE_DIMENSION
     }
+
+    table.insert(player.specs[color], spec)
 end
 
 function getColorFromNumber(num)
@@ -219,18 +237,24 @@ function isOutOfBounds(thing)
 end
 
 function handleCoding(color, coder, reviewer)
-    if table.getn(coder.specs) == 0 then
+    if noSpecsToCode(coder) then
         return
     end
 
-    if color == coder.specs[1].image then
+    if table.getn(coder.specs[color]) > 0 and color == coder.specs[color][1].image then
         table.insert(reviewer.codes, createCode(true, coder.codingDirection))
     else
         table.insert(reviewer.codes, createCode(false, coder.codingDirection))
     end
 
-    table.remove(coder.specs, 1)
+    table.remove(coder.specs[color], 1)
     coder.spawnTimer = SPAWN_SEQUENCE_DELAY_SEC / 3
+end
+
+function noSpecsToCode(coder)
+    return table.getn(coder.specs[BLUE]) == 0 and
+            table.getn(coder.specs[RED]) == 0 and
+            table.getn(coder.specs[YELLOW]) == 0
 end
 
 function handleReject(player)
@@ -239,14 +263,13 @@ function handleReject(player)
     end
 end
 
-function combineTables(table1, table2)
+function combineTables(...)
     combined = {}
-    for _, value in ipairs(table1) do
-        table.insert(combined, value)
-    end
 
-    for _, value in ipairs(table2) do
-        table.insert(combined, value)
+    for i, t in pairs{...} do
+        for _, value in ipairs(t) do
+            table.insert(combined, value)
+        end
     end
 
     return combined
