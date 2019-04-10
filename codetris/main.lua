@@ -15,6 +15,7 @@ local WRONG = "wrong"
 local CODES_IN_PROD_DISPLAY_SIZE = 5
 
 local TILE_DIMENSION = 32
+local MARGIN = 10
 local PLAYER_BASELINE = SCREEN_HEIGHT - 170
 
 local SPAWN_SEQUENCE_DELAY_SEC= 1
@@ -87,8 +88,8 @@ function love.update(dt)
     moveCodes(player1, dt)
     moveCodes(player2, dt)
 
-    spawnSpecIfTimeIsRight(player1, 10, dt)
-    spawnSpecIfTimeIsRight(player2, SCREEN_WIDTH - (3 * TILE_DIMENSION) - 10, dt)
+    spawnSpecIfTimeIsRight(player1, MARGIN, dt)
+    spawnSpecIfTimeIsRight(player2, SCREEN_WIDTH - (3 * TILE_DIMENSION) - MARGIN, dt)
 end
 
 function love.keypressed(key)
@@ -139,22 +140,32 @@ function drawImage(image, x, y, r, sx, sy)
 end
 
 function moveSpecs(coder, reviewer, dt)
-    for i=1, COLOR_COUNT, 1 do
-        indexColor = getColorFromNumber(i)
-        for index, spec in ipairs(coder.specs[indexColor]) do
+    for key, coloredSpecs in pairs(coder.specs) do
+        for index, spec in ipairs(coloredSpecs) do
             updateLocation(spec, dt)
             if isNoMoreCodable(spec) then
-                table.remove(coder.specs[indexColor], index)
+                table.remove(coloredSpecs, index)
                 table.insert(reviewer.codes, createCode(false, coder.codingDirection))
             end
         end
     end
+
+    -- for i=1, COLOR_COUNT, 1 do
+    --     indexColor = getColorFromNumber(i)
+    --     for index, spec in ipairs(coder.specs[indexColor]) do
+    --         updateLocation(spec, dt)
+    --         if isNoMoreCodable(spec) then
+    --             table.remove(coder.specs[indexColor], index)
+    --             table.insert(reviewer.codes, createCode(false, coder.codingDirection))
+    --         end
+    --     end
+    -- end
 end
 
 function moveCodes(coder, dt)
     for index, code in ipairs(coder.codes) do
         updateLocation(code, dt)
-        if isOutOfBounds(code) then
+        if isRejectable(code) then
             publishtoProd(code.image, codesInProd, scores)
             table.remove(coder.codes, index)
         end
@@ -209,10 +220,10 @@ function createCode(isCorrect, direction)
     end
 
     if direction == TO_RIGHT then
-        xPos = 10
+        xPos = MARGIN + TILE_DIMENSION
         yPos = PLAYER_BASELINE
     else
-        xPos = SCREEN_WIDTH - 10
+        xPos = SCREEN_WIDTH - MARGIN - 2 * TILE_DIMENSION
         yPos = PLAYER_BASELINE + TILE_DIMENSION
     end
 
@@ -231,9 +242,9 @@ function isNoMoreCodable(thing)
     return thing.yPos > PLAYER_BASELINE
 end
 
-function isOutOfBounds(thing)
-    return  thing.xPos < 0 or
-            thing.xPos > SCREEN_WIDTH
+function isRejectable(thing)
+    return  thing.xPos < MARGIN + TILE_DIMENSION or
+            thing.xPos > SCREEN_WIDTH - MARGIN - 2 * TILE_DIMENSION
 end
 
 function handleCoding(color, coder, reviewer)
@@ -306,7 +317,7 @@ end
 
 function drawProd(codesInProd, images)
      for i = #codesInProd, 1, -1 do
-        xPos = 450 - i * (TILE_DIMENSION + 10)
+        xPos = 450 - i * (TILE_DIMENSION + MARGIN)
         drawImage(images[codesInProd[i]], xPos, SCREEN_HEIGHT - 40)
      end
 end
