@@ -1,7 +1,8 @@
 #include <Arduino.h>
 #include <Keyboard.h>
 
-enum Button {
+enum Button
+{
     LEFT = 2,
     RIGHT = 3,
     UP = 4,
@@ -11,36 +12,50 @@ enum Button {
     BLUE = 8,
 };
 
-char getCharacter(Button button) {
+Button getButton(int pin)
+{
+    return static_cast<Button>(pin);
+}
+
+char getCharacter(Button button)
+{
     switch (button)
     {
-        case LEFT: return 'a';
-        case RIGHT: return 'd';
-        case UP: return 'w';
-        case DOWN: return 's';
-        case RED: return 'z';
-        case GREEN: return 'x';
-        case BLUE: return 'c';
+    case LEFT:
+        return 'a';
+    case RIGHT:
+        return 'd';
+    case UP:
+        return 'w';
+    case DOWN:
+        return 's';
+    case RED:
+        return 'z';
+    case GREEN:
+        return 'x';
+    case BLUE:
+        return 'c';
     }
 }
 
 void setup()
 {
-    for (int button = LEFT; button <= BLUE; button++)
+    for (int pin = LEFT; pin <= BLUE; pin++)
     {
-        pinMode(button, INPUT_PULLUP);
-        digitalWrite(button, HIGH);
+        pinMode(pin, INPUT_PULLUP);
+        digitalWrite(pin, HIGH);
     }
     Keyboard.begin();
 }
 
 void loop()
 {
-    for (int button = LEFT; button <= BLUE; button++)
+    for (int pin = LEFT; pin <= BLUE; pin++)
     {
-        if (digitalRead(button) == 0)
+        if (digitalRead(pin) == 0)
         {
-            Keyboard.print(getCharacter(static_cast<Button>(button)));
+            Button button = getButton(pin);
+            Keyboard.print(getCharacter(button));
         }
     }
     delay(100);
