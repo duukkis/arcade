@@ -1,62 +1,116 @@
 #include <Arduino.h>
 #include <Keyboard.h>
 
-enum Button
+class Button
 {
-    LEFT = 2,
-    RIGHT = 3,
-    UP = 4,
-    DOWN = 5,
-    RED = 6,
-    GREEN = 7,
-    BLUE = 8,
+public:
+    enum Pin
+    {
+        LEFT = 2,
+        RIGHT = 3,
+        UP = 4,
+        DOWN = 5,
+        RED = 6,
+        GREEN = 7,
+        BLUE = 8,
+    };
+
+    Button(Button::Pin _pin, char _character)
+    {
+        pin = static_cast<int>(_pin);
+        character = _character;
+        state = HIGH;
+    }
+
+    void initialize()
+    {
+        pinMode(pin, INPUT_PULLUP);
+        digitalWrite(pin, state);
+    }
+
+    void update()
+    {
+        int newState = digitalRead(pin);
+
+        if (newState == state)
+        {
+            return;
+        }
+
+        if (newState == LOW)
+        {
+            Keyboard.press(character);
+        }
+        else
+        {
+            Keyboard.release(character);
+        }
+
+        state = newState;
+    }
+
+private:
+    int pin;
+    char character;
+    int state;
 };
 
-Button getButton(int pin)
+class Joystick
 {
-    return static_cast<Button>(pin);
-}
-
-char getCharacter(Button button)
-{
-    switch (button)
+public:
+    Joystick()
     {
-    case LEFT:
-        return 'a';
-    case RIGHT:
-        return 'd';
-    case UP:
-        return 'w';
-    case DOWN:
-        return 's';
-    case RED:
-        return 'z';
-    case GREEN:
-        return 'x';
-    case BLUE:
-        return 'c';
+        buttons = new Button[N_BUTTONS] {
+            Button(Button::LEFT, 'a'),
+            Button(Button::RIGHT, 'd'),
+            Button(Button::UP, 'w'),
+            Button(Button::DOWN, 's'),
+            Button(Button::RED, 'z'),
+            Button(Button::GREEN, 'x'),
+            Button(Button::BLUE, 'c')
+        };
     }
-}
+
+    ~Joystick()
+    {
+        if (buttons)
+        {
+            delete[] buttons;
+        }
+    }
+
+    void initialize()
+    {
+        for (int i = 0; i <= N_BUTTONS ; i++)
+        {
+            buttons[i].initialize();
+        }
+    }
+
+    void update()
+    {
+        for (int i = 0; i <= N_BUTTONS ; i++)
+        {
+            buttons[i].update();
+        }
+    }
+
+private:
+    static const int N_BUTTONS = 7;
+    Button *buttons;
+};
+
+Joystick joystick;
 
 void setup()
 {
-    for (int pin = LEFT; pin <= BLUE; pin++)
-    {
-        pinMode(pin, INPUT_PULLUP);
-        digitalWrite(pin, HIGH);
-    }
+    joystick.initialize();
     Keyboard.begin();
 }
 
 void loop()
 {
-    for (int pin = LEFT; pin <= BLUE; pin++)
-    {
-        if (digitalRead(pin) == 0)
-        {
-            Button button = getButton(pin);
-            Keyboard.print(getCharacter(button));
-        }
-    }
-    delay(100);
+    joystick.update();
+    delay(10);
 }
+
