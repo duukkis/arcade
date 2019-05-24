@@ -111,6 +111,4 @@ void setup()
 void loop()
 {
     joystick.update();
-    delay(10);
 }
-
