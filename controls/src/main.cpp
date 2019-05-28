@@ -1,6 +1,8 @@
 #include <Arduino.h>
 #include <Keyboard.h>
 
+#define N_BUTTONS 7
+
 class Button
 {
 public:
@@ -58,25 +60,14 @@ private:
 class Joystick
 {
 public:
-    Joystick()
+    Joystick(Button* _buttons)
     {
-        buttons = new Button[N_BUTTONS] {
-            Button(Button::LEFT, 'a'),
-            Button(Button::RIGHT, 'd'),
-            Button(Button::UP, 'w'),
-            Button(Button::DOWN, 's'),
-            Button(Button::RED, 'z'),
-            Button(Button::GREEN, 'x'),
-            Button(Button::BLUE, 'c')
-        };
+        buttons = _buttons;
     }
 
     ~Joystick()
     {
-        if (buttons)
-        {
-            delete[] buttons;
-        }
+        delete[] buttons;
     }
 
     void initialize()
@@ -85,6 +76,7 @@ public:
         {
             buttons[i].initialize();
         }
+        Keyboard.begin();
     }
 
     void update()
@@ -96,16 +88,36 @@ public:
     }
 
 private:
-    static const int N_BUTTONS = 7;
     Button *buttons;
 };
 
-Joystick joystick;
+#if defined(PLAYER_1)
+    Joystick joystick(new Button[N_BUTTONS] {
+        Button(Button::LEFT, 'a'),
+        Button(Button::RIGHT, 'd'),
+        Button(Button::UP, 'w'),
+        Button(Button::DOWN, 's'),
+        Button(Button::RED, 'z'),
+        Button(Button::GREEN, 'x'),
+        Button(Button::BLUE, 'c')
+    });
+#elif defined(PLAYER_2)
+    Joystick joystick(new Button[N_BUTTONS] {
+        Button(Button::LEFT, 'j'),
+        Button(Button::RIGHT, 'l'),
+        Button(Button::UP, 'i'),
+        Button(Button::DOWN, 'k'),
+        Button(Button::RED, 'b'),
+        Button(Button::GREEN, 'n'),
+        Button(Button::BLUE, 'm')
+    });
+#else
+    #error Must define -DPLAYER_1 or -DPLAYER_2
+#endif
 
 void setup()
 {
     joystick.initialize();
-    Keyboard.begin();
 }
 
 void loop()
