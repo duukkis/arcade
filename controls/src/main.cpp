@@ -30,6 +30,12 @@ public:
         digitalWrite(pin, state);
     }
 
+    #ifdef DEBUG_SERIAL
+        void debug(int state) {
+            Serial.println(String(character) + ": " + String(state));
+        }
+    #endif
+
     void update()
     {
         int newState = digitalRead(pin);
@@ -38,6 +44,10 @@ public:
         {
             return;
         }
+
+        #ifdef DEBUG_SERIAL
+            debug(state);
+        #endif
 
         if (newState == LOW)
         {
@@ -72,16 +82,19 @@ public:
 
     void initialize()
     {
-        for (int i = 0; i <= N_BUTTONS ; i++)
+        for (int i = 0; i < N_BUTTONS ; i++)
         {
             buttons[i].initialize();
         }
         Keyboard.begin();
+        #ifdef DEBUG_SERIAL
+            Serial.begin(9600);
+        #endif
     }
 
     void update()
     {
-        for (int i = 0; i <= N_BUTTONS ; i++)
+        for (int i = 0; i < N_BUTTONS ; i++)
         {
             buttons[i].update();
         }
