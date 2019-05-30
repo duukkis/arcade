@@ -35,8 +35,14 @@ function love.update(dt)
 end
 
 function love.keypressed(key)
-  if key == "x" then
-    players[PLAYER_1].logic:move(1)
+  if key == "a" then
+    players[PLAYER_1].logic:move(-1, players[PLAYER_2].logic)
+  elseif key == "d" then
+    players[PLAYER_1].logic:move(1, players[PLAYER_2].logic)
+  elseif key == "j" then
+    players[PLAYER_2].logic:move(-1, players[PLAYER_1].logic)
+  elseif key == "l" then
+    players[PLAYER_2].logic:move(1, players[PLAYER_1].logic)
   end
 end
 
@@ -50,10 +56,10 @@ function Player:new(position)
   return o
 end
 
-function Player:move(movement)
+function Player:move(movement, otherPlayer)
   print(self.position)
   local futurePos = self.position + movement
-  if futurePos >= 0 or futurePos <= 4 then
+  if futurePos >= 0 and futurePos <= 4 and futurePos ~= otherPlayer.position then
     self.position = futurePos
     return true
   else
