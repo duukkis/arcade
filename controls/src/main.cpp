@@ -2,6 +2,7 @@
 #include <Keyboard.h>
 
 #define N_BUTTONS 7
+#define UPDATE_DELAY_MS 1
 
 class Button
 {
@@ -98,6 +99,7 @@ public:
         {
             buttons[i].update();
         }
+        delay(UPDATE_DELAY_MS);
     }
 
 private:
