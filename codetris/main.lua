@@ -3,7 +3,7 @@ local SCREEN_HEIGHT = 480
 
 local BLUE = "blue"
 local RED = "red"
-local YELLOW = "yellow"
+local GREEN = "green"
 local COLOR_COUNT = 3
 
 local TO_RIGHT = 1
@@ -22,9 +22,9 @@ local SPAWN_SEQUENCE_DELAY_SEC= 1
 
 local player1 = {
     specs = {
-        blue = {},
         red = {},
-        yellow = {}
+        green = {},
+        blue = {}
     },
     codes = {},
     codingDirection = TO_RIGHT,
@@ -33,9 +33,9 @@ local player1 = {
 
 local player2 = {
     specs = {
-        blue = {},
         red = {},
-        yellow = {}
+        green = {},
+        blue = {}
     },
     codes = {},
     codingDirection = TO_LEFT,
@@ -57,9 +57,9 @@ function love.load()
     love.window.setMode(SCREEN_WIDTH, SCREEN_HEIGHT)
     love.window.setTitle("ⓒⓞⓓⓔⓣⓡⓘⓢ")
 
-    specImages[BLUE] = love.graphics.newImage("images/azzurro.png")
     specImages[RED] = love.graphics.newImage("images/rosso.png")
-    specImages[YELLOW] = love.graphics.newImage("images/giallo.png")
+    specImages[GREEN] = love.graphics.newImage("images/bene.png")
+    specImages[BLUE] = love.graphics.newImage("images/azzurro.png")
 
     codeImages[CORRECT] = love.graphics.newImage("images/bene.png")
     codeImages[WRONG] = love.graphics.newImage("images/antibene.png")
@@ -72,8 +72,8 @@ function love.draw()
     drawScoreboard(scores)
     drawProd(codesInProd, codeImages)
 
-    drawThings(combineTables(player1.specs[BLUE], player1.specs[RED], player1.specs[YELLOW],
-                            player2.specs[BLUE], player2.specs[RED], player2.specs[YELLOW]),
+    drawThings(combineTables(player1.specs[RED], player1.specs[GREEN], player1.specs[BLUE],
+                            player2.specs[RED], player2.specs[GREEN], player2.specs[BLUE]),
                             specImages)
     drawThings(combineTables(player1.codes, player2.codes), codeImages)
 
@@ -94,15 +94,15 @@ end
 
 function love.keypressed(key)
     if key == "z" then
-        handleCoding(BLUE, player1, player2)
-    end
-
-    if key == "x" then
         handleCoding(RED, player1, player2)
     end
 
+    if key == "x" then
+        handleCoding(GREEN, player1, player2)
+    end
+
     if key == "c" then
-        handleCoding(YELLOW, player1, player2)
+        handleCoding(BLUE, player1, player2)
     end
 
     if key == "lshift" then
@@ -110,15 +110,15 @@ function love.keypressed(key)
     end
 
     if key == "b" then
-        handleCoding(BLUE, player2, player1)
-    end
-
-    if key == "n" then
         handleCoding(RED, player2, player1)
     end
 
+    if key == "n" then
+        handleCoding(GREEN, player2, player1)
+    end
+
     if key == "m" then
-        handleCoding(YELLOW, player2, player1)
+        handleCoding(BLUE, player2, player1)
     end
 
     if key == "rshift" then
@@ -204,11 +204,11 @@ end
 
 function getColorFromNumber(num)
     if num == 1 then
-        return BLUE
-    elseif num == 2 then
         return RED
+    elseif num == 2 then
+        return GREEN
     else
-        return YELLOW
+        return BLUE
     end
 end
 
@@ -265,7 +265,7 @@ end
 function noSpecsToCode(coder)
     return table.getn(coder.specs[BLUE]) == 0 and
             table.getn(coder.specs[RED]) == 0 and
-            table.getn(coder.specs[YELLOW]) == 0
+            table.getn(coder.specs[GREEN]) == 0
 end
 
 function handleReject(player)
@@ -289,11 +289,11 @@ end
 function drawInstructions()
     local leftPadding = 200
     love.graphics.print('player 1', leftPadding, 20)
-    love.graphics.print('z = blue, x = red, c = yellow', leftPadding, 40)
+    love.graphics.print('z = red, x = greeb, c = blue', leftPadding, 40)
     love.graphics.print('lshift = reject', leftPadding, 60)
 
     love.graphics.print('player 2', leftPadding, 100)
-    love.graphics.print('b = blue, n = red, m = yellow', leftPadding, 120)
+    love.graphics.print('b = red, n = green, m = blue', leftPadding, 120)
     love.graphics.print('rshift = reject', leftPadding, 140)
 end
 
