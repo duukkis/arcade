@@ -7,12 +7,12 @@ Arcade of fun
 * Raspberry Pi
 * Buttons ✅
 * Joysticks ✅
-* Switches
-* Potentiometers
+* Switches ✅
+* Potentiometers ✅
 * Plywood
 * Active speakers
 * Led strip
-* Hdmi
+* Hdmi or other monitor cable
 * Cheap monitor (preferably CRT)
 * Power cable for monitor
 * Micro usb
@@ -30,7 +30,7 @@ Arcade of fun
 
 Execute `run.sh {name of the game}`
 
-or if you want to debug stuff to console using `print-function`
+or if you want to debug stuff to console using `print` function
 
 Add `alias love="/Applications/love.app/Contents/MacOS/love"`to .bash_profile
 

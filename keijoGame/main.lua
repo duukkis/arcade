@@ -11,10 +11,9 @@ local PIPE = "pipe"
 local PLAYER_1 = "player1"
 local PLAYER_2 = "player2"
 local BACKGROUND = "background"
-local COLOR_COUNT = 3
+local PIPE_COUNT = 5
 
 local images = {}
-local lanes = {}
 local players = {}
 
 function love.load()
@@ -61,11 +60,8 @@ end
 function Player:move(movement, otherPlayer)
     print(self.position)
     local futurePos = self.position + movement
-    if futurePos >= 0 and futurePos <= 4 and futurePos ~= otherPlayer.position then
+    if futurePos >= 0 and futurePos <= PIPE_COUNT - 1 and futurePos ~= otherPlayer.position then
         self.position = futurePos
-        return true
-    else
-        return false
     end
 end
 
@@ -79,7 +75,7 @@ end
 
 function drawPipes()
     local yOffset = MARGIN_Y + 7 * SPRITE_DIMENSION
-    for i = 0, 4 do
+    for i = 0, PIPE_COUNT - 1 do
         local xOffset = MARGIN_X + (4 * i + 1) * SPRITE_DIMENSION
         drawImage(images[PIPE], xOffset, yOffset)
     end
