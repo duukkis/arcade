@@ -30,5 +30,4 @@ function drawPipes()
   for i = 0,4 do
     love.graphics.draw(images[PIPE], PIPE_X_OFFSET + (i * localOffset), PIPE_Y_OFFSET)
   end
-  
 end
