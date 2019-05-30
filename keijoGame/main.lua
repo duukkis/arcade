@@ -19,7 +19,7 @@ function love.load()
   love.window.setMode(SCREEN_WIDTH, SCREEN_HEIGHT)
   love.window.setTitle("K E I J O G A M E")
   images[PIPE] = love.graphics.newImage("images/blue.png")
-  images[BACKGROUND] = love.graphics.newImage("images/shakki.png")
+  images[BACKGROUND] = love.graphics.newImage("images/bg.png")
   players[PLAYER_1] = {sprite = love.graphics.newImage("images/player1.png"), logic = Player:new(0)}
   players[PLAYER_2] = {sprite = love.graphics.newImage("images/player2.png"), logic = Player:new(4)}
 end
@@ -65,7 +65,7 @@ function drawPlayers()
   for _, player in pairs(players) do
     love.graphics.draw(player.sprite, PIPE_X_OFFSET + (140 * player.logic.position), 400)
   end
-  
+
 end
 
 function drawPipes()
