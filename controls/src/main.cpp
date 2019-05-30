@@ -103,7 +103,7 @@ public:
     }
 
 private:
-    Button *buttons;
+    Button* buttons;
 };
 
 #if defined(PLAYER_1)
