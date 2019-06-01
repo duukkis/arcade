@@ -3,31 +3,35 @@ local SCREEN_HEIGHT = 640
 local MARGIN_X = 16
 local MARGIN_Y = 16
 local SPRITE_DIMENSION = 32
+local LANES_COUNT = 5
+
+local MOVEMENT_DELAY_SEC = 0.5
+local SPAWN_DELAY_SEC = 5 * MOVEMENT_DELAY_SEC
 
 local BLUE = "blue"
 local RED = "red"
 local GREEN = "green"
 local YELLOW = "yellow"
 
-local ON = "on"
-local OFF = "off"
-
 local BACKGROUND = "background"
 local LANES = "lanes"
 local GATES_SPRITE = "gatesSprite"
+local UKKELI = "ukkeli"
 
 local images = {}
-images[ON] = {}
-images[OFF] = {}
 local gates = {}
+local ukkelis = {}
+local movementTimer = MOVEMENT_DELAY_SEC
+local spawnTimer = 0
 
 function love.load()
     math.randomseed(os.time())
     love.window.setMode(SCREEN_WIDTH, SCREEN_HEIGHT)
-    love.window.setTitle("M Ö T K Ä L E")
+    love.window.setTitle("M Ö ⓣ K Ä L ⓔ")
     images[BACKGROUND] = love.graphics.newImage("images/bg_margin.png")
     images[LANES] = love.graphics.newImage("images/lanes.png")
     images[GATES_SPRITE] = love.graphics.newImage("images/gates.png")
+    images[UKKELI] = love.graphics.newImage("images/ukkeli.png")
     initGates()
 end
 
@@ -39,9 +43,24 @@ function love.draw()
     drawGates(RED)
     drawGates(YELLOW)
     drawGates(GREEN)
+
+    drawUkkelis()
 end
 
 function love.update(dt)
+    if spawnTimer > 0 then
+        spawnTimer = spawnTimer - dt
+    else
+        spawnUkkeli()
+        spawnTimer = SPAWN_DELAY_SEC
+    end
+
+    if movementTimer > 0 then
+        movementTimer = movementTimer - dt
+    else
+        moveUkkelis()
+        movementTimer = MOVEMENT_DELAY_SEC
+    end
 
 end
 
@@ -115,13 +134,21 @@ function drawGates(color)
     end
 end
 
-function drawImage(image, x, y, r, sx, sy)
-    x = x or 0
-    y = y or 0
-    r = r or 0
-    sx = sx or 1
-    sy = sy or 1
-    love.graphics.draw(image, x, y, r, sx, sy)
+function getOpenGates()
+    openGates = {}
+    if (gates[BLUE].isOpen) then
+        openGates = combineTables(openGates, gates[BLUE].gatePositions)
+    end
+    if (gates[RED].isOpen) then
+        openGates = combineTables(openGates, gates[RED].gatePositions)
+    end
+    if (gates[YELLOW].isOpen) then
+        openGates = combineTables(openGates, gates[YELLOW].gatePositions)
+    end
+    if (gates[GREEN].isOpen) then
+        openGates = combineTables(openGates, gates[GREEN].gatePositions)
+    end
+    return openGates
 end
 
 function drawGate(gateQuad, x, y)
@@ -132,12 +159,76 @@ function getGateImageFromSprite(x, y, imageFile)
     return love.graphics.newQuad(x, y, SPRITE_DIMENSION, SPRITE_DIMENSION, imageFile:getDimensions())
 end
 
+Ukkeli = {}
+Ukkeli.__index = Ukkeli
+
+function Ukkeli:new(lane)
+    o = {}
+    setmetatable(o, ukkelit)
+    o.lane = lane
+    o.row = 1
+    return o
+end
+
+function spawnUkkeli()
+    local laneNumber = math.random(LANES_COUNT)
+    table.insert(ukkelis, 1, Ukkeli:new(laneNumber))
+end
+
+function drawUkkelis()
+    for _, ukkeli in ipairs(ukkelis) do
+        local x = MARGIN_X + 2 * ukkeli.lane * SPRITE_DIMENSION
+        local y = MARGIN_Y + (ukkeli.row - 1) * SPRITE_DIMENSION
+        drawImage(images[UKKELI], x, y)
+    end
+end
+
+function moveUkkelis()
+    local openGates = getOpenGates()
+    for _, ukkeli in ipairs(ukkelis) do
+        move(ukkeli, openGates)
+    end
+end
+
+
+function move(ukkeli, openGates)
+
+    for _, openGate in ipairs(openGates) do
+        if openGate.row == ukkeli.row and openGate.from == ukkeli.lane then
+            ukkeli.lane = openGate.to
+        end
+    end
+
+    ukkeli.row = ukkeli.row + 1
+
+end
+
+function drawImage(image, x, y, r, sx, sy)
+    x = x or 0
+    y = y or 0
+    r = r or 0
+    sx = sx or 1
+    sy = sy or 1
+    love.graphics.draw(image, x, y, r, sx, sy)
+end
+
+function combineTables(...)
+    combined = {}
+
+    for i, t in pairs{...} do
+        for _, value in ipairs(t) do
+            table.insert(combined, value)
+        end
+    end
+
+    return combined
+end
+
 --[[
 
 TODO
-arvo mistä tulee ukkeli
 liikuttele sitä alas
-tee lanejen päihin laskurit, jotka kertoo paljon meni eri päihin
 logiikka joka teleporttaa tyypin jos lanesta on siirtymä toiseen
+tee lanejen päihin laskurit, jotka kertoo paljon meni eri päihin
 
 ]]
