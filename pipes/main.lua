@@ -1,5 +1,8 @@
 local SCREEN_WIDTH = 480
 local SCREEN_HEIGHT = 640
+local MARGIN_X = 16
+local MARGIN_Y = 16
+local SPRITE_DIMENSION = 32
 
 local BLUE = "blue"
 local RED = "red"
@@ -9,9 +12,9 @@ local YELLOW = "yellow"
 local ON = "on"
 local OFF = "off"
 
-
 local BACKGROUND = "background"
 local LANES = "lanes"
+local GATES_SPRITE = "gatesSprite"
 
 local images = {}
 images[ON] = {}
@@ -24,13 +27,14 @@ function love.load()
     love.window.setTitle("M Ö T K Ä L E")
     images[BACKGROUND] = love.graphics.newImage("images/bg_margin.png")
     images[LANES] = love.graphics.newImage("images/lanes.png")
+    images[GATES_SPRITE] = love.graphics.newImage("images/gates.png")
     initGates()
 end
 
 function love.draw()
     drawImage(images[BACKGROUND])
     drawImage(images[LANES])
-    drawGates()
+    drawGates(BLUE)
 end
 
 function love.update(dt)
@@ -39,58 +43,55 @@ end
 
 function love.keypressed(key)
     if key == "1" then
-        toggleGates(BLUE)
+        gates[BLUE]:toggle()
     elseif key == "2" then
-        toggleGates(RED)
+--        gates[RED]:toggle()
     elseif key == "3" then
-        toggleGates(YELLOW)
+--        gates[YELLOW]:toggle()
     elseif key == "4" then
-        toggleGates(GREEN)
+--       gates[GREEN]:toggle()
     end
+end
+
+GateSet = {}
+GateSet.__index = GateSet
+
+function GateSet:new(openImage, closedImage, gatePositions)
+    o = {}
+    setmetatable(o, GateSet)
+    o.isOpen = false
+    o.openImage = openImage
+    o.closedImage = closedImage
+    o.gatePositions = gatePositions
+    return o
+end
+
+function GateSet:toggle()
+    self.isOpen = not self.isOpen
 end
 
 function initGates()
-    gates[BLUE] = false
-    images[ON][BLUE] = love.graphics.newImage("images/blue_on.png")
-    images[OFF][BLUE] = love.graphics.newImage("images/blue_off.png")
+    local gatesConfig = love.filesystem.load("gates.lua")()
 
-    gates[RED] = false
-    images[ON][RED] = love.graphics.newImage("images/red_on.png")
-    images[OFF][RED] = love.graphics.newImage("images/red_off.png")
+    gates[BLUE] = GateSet:new(
+        getGateImageFromSprite(SPRITE_DIMENSION * 2, 0, images[GATES_SPRITE]),
+        getGateImageFromSprite(0, SPRITE_DIMENSION, images[GATES_SPRITE]),
+        gatesConfig[BLUE])
 
-    gates[GREEN] = false
-    images[ON][GREEN] = love.graphics.newImage("images/green_on.png")
-    images[OFF][GREEN] = love.graphics.newImage("images/green_off.png")
-
-    gates[YELLOW] = false
-    images[ON][YELLOW] = love.graphics.newImage("images/yellow_on.png")
-    images[OFF][YELLOW] = love.graphics.newImage("images/yellow_off.png")
 end
 
-function toggleGates(gate)
-    if gates[gate] then
-        gates[gate] = false
-        return
-    end
-    gates[gate] = true
-end
+function drawGates(color)
+    for _, position in pairs(gates[color].gatePositions) do
+        xPos = MARGIN_X + 2 * position.from * SPRITE_DIMENSION + SPRITE_DIMENSION
+        yPos = MARGIN_Y + position.row * SPRITE_DIMENSION
 
-function drawGates()
-    drawGate(BLUE, gates[BLUE])
-    drawGate(RED, gates[RED])
-    drawGate(YELLOW, gates[YELLOW])
-    drawGate(GREEN, gates[GREEN])
-end
-
-
-function drawGate(color, isOn)
-    if isOn then
-        drawImage(images[ON][color])
-    else
-        drawImage(images[OFF][color])
+        if gates[color].isOpen then
+            drawGate(gates[color].openImage, xPos, yPos)
+        else
+            drawGate(gates[color].closedImage, xPos, yPos)
+        end
     end
 end
-
 
 function drawImage(image, x, y, r, sx, sy)
     x = x or 0
@@ -99,6 +100,14 @@ function drawImage(image, x, y, r, sx, sy)
     sx = sx or 1
     sy = sy or 1
     love.graphics.draw(image, x, y, r, sx, sy)
+end
+
+function drawGate(gateQuad, x, y)
+    love.graphics.draw(images[GATES_SPRITE], gateQuad, x, y)
+end
+
+function getGateImageFromSprite(x, y, imageFile)
+    return love.graphics.newQuad(x, y, SPRITE_DIMENSION, SPRITE_DIMENSION, imageFile:getDimensions())
 end
 
 --[[
