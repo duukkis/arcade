@@ -34,7 +34,11 @@ end
 function love.draw()
     drawImage(images[BACKGROUND])
     drawImage(images[LANES])
+
     drawGates(BLUE)
+    drawGates(RED)
+    drawGates(YELLOW)
+    drawGates(GREEN)
 end
 
 function love.update(dt)
@@ -45,11 +49,11 @@ function love.keypressed(key)
     if key == "1" then
         gates[BLUE]:toggle()
     elseif key == "2" then
---        gates[RED]:toggle()
+        gates[RED]:toggle()
     elseif key == "3" then
---        gates[YELLOW]:toggle()
+        gates[YELLOW]:toggle()
     elseif key == "4" then
---       gates[GREEN]:toggle()
+        gates[GREEN]:toggle()
     end
 end
 
@@ -78,11 +82,29 @@ function initGates()
         getGateImageFromSprite(0, SPRITE_DIMENSION, images[GATES_SPRITE]),
         gatesConfig[BLUE])
 
+    gates[RED] = GateSet:new(
+        getGateImageFromSprite(SPRITE_DIMENSION, SPRITE_DIMENSION, images[GATES_SPRITE]),
+        getGateImageFromSprite(2 * SPRITE_DIMENSION, SPRITE_DIMENSION, images[GATES_SPRITE]),
+        gatesConfig[RED])
+
+    gates[YELLOW] = GateSet:new(
+        getGateImageFromSprite(0, 0, images[GATES_SPRITE]),
+        getGateImageFromSprite(SPRITE_DIMENSION, 0, images[GATES_SPRITE]),
+        gatesConfig[YELLOW])
+
+    gates[GREEN] = GateSet:new(
+        getGateImageFromSprite(0, 2 * SPRITE_DIMENSION, images[GATES_SPRITE]),
+        getGateImageFromSprite(SPRITE_DIMENSION, 2 * SPRITE_DIMENSION, images[GATES_SPRITE]),
+        gatesConfig[GREEN])
 end
 
 function drawGates(color)
     for _, position in pairs(gates[color].gatePositions) do
-        xPos = MARGIN_X + 2 * position.from * SPRITE_DIMENSION + SPRITE_DIMENSION
+        if (position.to > position.from) then
+            xPos = MARGIN_X + 2 * position.from * SPRITE_DIMENSION + SPRITE_DIMENSION
+        else
+            xPos = MARGIN_X + 2 * position.from * SPRITE_DIMENSION - SPRITE_DIMENSION
+        end
         yPos = MARGIN_Y + position.row * SPRITE_DIMENSION
 
         if gates[color].isOpen then
