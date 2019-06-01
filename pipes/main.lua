@@ -21,6 +21,7 @@ local UKKELI = "ukkeli"
 local images = {}
 local gates = {}
 local ukkelis = {}
+local scores
 local movementTimer = MOVEMENT_DELAY_SEC
 local spawnTimer = 0
 
@@ -32,6 +33,7 @@ function love.load()
     images[LANES] = love.graphics.newImage("images/lanes.png")
     images[GATES_SPRITE] = love.graphics.newImage("images/gates.png")
     images[UKKELI] = love.graphics.newImage("images/ukkeli.png")
+    initScores()
     initGates()
 end
 
@@ -45,6 +47,7 @@ function love.draw()
     drawGates(GREEN)
 
     drawUkkelis()
+    drawScoreboard(scores)
 end
 
 function love.update(dt)
@@ -190,7 +193,6 @@ function moveUkkelis()
     end
 end
 
-
 function move(ukkeli, openGates)
 
     for _, openGate in ipairs(openGates) do
@@ -201,6 +203,25 @@ function move(ukkeli, openGates)
 
     ukkeli.row = ukkeli.row + 1
 
+    if ukkeli.row >= 19 then
+        scores[ukkeli.lane] = scores[ukkeli.lane] + 1
+        table.remove(ukkelis)
+    end
+end
+
+function initScores()
+    scores = {}
+    for i = 1, LANES_COUNT do
+        scores[i] = 0
+    end
+end
+
+function drawScoreboard(scores)
+    local yPos = MARGIN_Y + 18 * SPRITE_DIMENSION
+    for i = 1, LANES_COUNT do
+        local xPos = MARGIN_X + (2 * i) * SPRITE_DIMENSION
+        love.graphics.print(scores[i], xPos, yPos)
+    end
 end
 
 function drawImage(image, x, y, r, sx, sy)
@@ -223,12 +244,3 @@ function combineTables(...)
 
     return combined
 end
-
---[[
-
-TODO
-liikuttele sitä alas
-logiikka joka teleporttaa tyypin jos lanesta on siirtymä toiseen
-tee lanejen päihin laskurit, jotka kertoo paljon meni eri päihin
-
-]]
