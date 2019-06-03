@@ -97,7 +97,7 @@ function GateSet:toggle()
 end
 
 function initGates()
-    local gatesConfig = love.filesystem.load("gates.lua")()
+    local gatesConfig = love.filesystem.load("gates_compact.lua")()
 
     gates[BLUE] = GateSet:new(
         getGateImageFromSprite(SPRITE_DIMENSION * 2, 0, images[GATES_SPRITE]),
