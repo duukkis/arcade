@@ -22,10 +22,10 @@ Switch *switches = new Switch[N_SWITCHES]
     Switch(Button::GREEN, 'n'),
     Switch(Button::BLUE, 'm'),
 #elif defined(TOGGLE_PANEL)
-    Switch(Toggle::RED, '1'),
-    Switch(Toggle::BLUE, '2'),
-    Switch(Toggle::GREEN, '3'),
-    Switch(Toggle::YELLOW, '4')
+    Switch(Toggle::BLUE, '1'),
+    Switch(Toggle::RED, '2'),
+    Switch(Toggle::YELLOW, '3'),
+    Switch(Toggle::GREEN, '4')
 #else
 #error Must define -DPLAYER_1, -DPLAYER_2 or -DTOGGLE_PANEL
 #endif
