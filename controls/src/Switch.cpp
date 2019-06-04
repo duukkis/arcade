@@ -1,21 +1,21 @@
 #include <Arduino.h>
 #include <Keyboard.h>
-#include "button.h"
+#include "Switch.h"
 
-Button::Button(Button::Pin _pin, char _character)
+Switch::Switch(int _pin, char _character)
 {
-    pin = static_cast<int>(_pin);
+    pin = _pin;
     character = _character;
     state = HIGH;
 }
 
-void Button::initialize()
+void Switch::initialize()
 {
     pinMode(pin, INPUT_PULLUP);
     digitalWrite(pin, state);
 }
 
-void Button::update()
+void Switch::update()
 {
     int newState = digitalRead(pin);
 
