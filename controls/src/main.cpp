@@ -25,7 +25,7 @@ Switch *switches = new Switch[N_SWITCHES]
     Switch(Toggle::BLUE, '1'),
     Switch(Toggle::RED, '2'),
     Switch(Toggle::YELLOW, '3'),
-    Switch(Toggle::GREEN, '4')
+    Switch(Toggle::GREEN, '4'),
 #else
 #error Must define -DPLAYER_1, -DPLAYER_2 or -DTOGGLE_PANEL
 #endif
