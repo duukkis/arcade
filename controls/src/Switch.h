@@ -10,10 +10,10 @@ enum class Joystick : int
 
 enum class Toggle : int
 {
-    RED = 2,
-    BLUE = 3,
-    GREEN = 4,
-    YELLOW = 5,
+    BLUE = 2,
+    RED = 3,
+    YELLOW = 4,
+    GREEN = 5,
 };
 
 enum class Button : int
