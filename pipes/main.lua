@@ -69,13 +69,31 @@ end
 
 function love.keypressed(key)
     if key == "1" then
-        gates[BLUE]:toggle()
-    elseif key == "2" then
-        gates[RED]:toggle()
-    elseif key == "3" then
-        gates[YELLOW]:toggle()
-    elseif key == "4" then
-        gates[GREEN]:toggle()
+        gates[BLUE]:toggle(true)
+    end
+    if key == "2" then
+        gates[RED]:toggle(true)
+    end
+    if key == "3" then
+        gates[YELLOW]:toggle(true)
+    end
+    if key == "4" then
+        gates[GREEN]:toggle(true)
+    end
+end
+
+function love.keyreleased(key)
+    if key == "1" then
+        gates[BLUE]:toggle(false)
+    end
+    if key == "2" then
+        gates[RED]:toggle(false)
+    end
+    if key == "3" then
+        gates[YELLOW]:toggle(false)
+    end
+    if key == "4" then
+        gates[GREEN]:toggle(false)
     end
 end
 
@@ -92,8 +110,8 @@ function GateSet:new(openImage, closedImage, gatePositions)
     return o
 end
 
-function GateSet:toggle()
-    self.isOpen = not self.isOpen
+function GateSet:toggle(isOpen)
+    self.isOpen = isOpen
 end
 
 function initGates()
