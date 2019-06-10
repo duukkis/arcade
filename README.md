@@ -12,9 +12,9 @@ Arcade of fun
 * Plywood
 * Active speakers
 * Led strip
-* Hdmi or other monitor cable
-* Cheap monitor (preferably CRT)
-* Power cable for monitor
+* Scart cable for monitor
+* Scart adaptor for Raspi
+* Cheap monitor (preferably CRT) ✅
 * Micro usb
 * Power source for Raspi
 * Extension cord
