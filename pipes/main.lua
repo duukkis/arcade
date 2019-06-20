@@ -68,32 +68,25 @@ function love.update(dt)
 end
 
 function love.keypressed(key)
-    if key == "1" then
-        gates[BLUE]:toggle(true)
-    end
-    if key == "2" then
-        gates[RED]:toggle(true)
-    end
-    if key == "3" then
-        gates[YELLOW]:toggle(true)
-    end
-    if key == "4" then
-        gates[GREEN]:toggle(true)
-    end
+    toggleKey(key, true)
 end
 
 function love.keyreleased(key)
+    toggleKey(key, false)
+end
+
+function toggleKey(key, value)
     if key == "1" then
-        gates[BLUE]:toggle(false)
+        gates[BLUE]:toggle(value)
     end
     if key == "2" then
-        gates[RED]:toggle(false)
+        gates[RED]:toggle(value)
     end
     if key == "3" then
-        gates[YELLOW]:toggle(false)
+        gates[YELLOW]:toggle(value)
     end
     if key == "4" then
-        gates[GREEN]:toggle(false)
+        gates[GREEN]:toggle(value)
     end
 end
 
