@@ -7,6 +7,7 @@ namespace Arcade
   {
     public Texture2D PlayerTexture;
     public Vector2 Position;
+    public float Speed;
     public int Width
     {
       get { return PlayerTexture.Width; }
@@ -20,6 +21,7 @@ namespace Arcade
     {
       PlayerTexture = texture;
       Position = position;
+      Speed = 2.0f;
     }
 
     public void Update()
