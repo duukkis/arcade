@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
 using MonoGame.Extended.Tiled;
 using MonoGame.Extended.Tiled.Renderers;
+using Arcade.Entities;
 
 namespace Arcade.GameStates
 {
@@ -36,8 +37,8 @@ namespace Arcade.GameStates
 
       Vector2 playerOnePosition = new Vector2(graphicsDevice.Viewport.TitleSafeArea.X, graphicsDevice.Viewport.TitleSafeArea.Y + graphicsDevice.Viewport.TitleSafeArea.Height / 2);
       Vector2 playerTwoPosition = new Vector2(graphicsDevice.Viewport.TitleSafeArea.X + 200, graphicsDevice.Viewport.TitleSafeArea.Y + graphicsDevice.Viewport.TitleSafeArea.Height / 2);
-      PlayerOne.Initialize(content.Load<Texture2D>("player1"), playerOnePosition);
-      PlayerTwo.Initialize(content.Load<Texture2D>("player2"), playerTwoPosition);
+      PlayerOne.Initialize(content.Load<Texture2D>("player1"), playerOnePosition, new PlayerControls(Keys.Right, Keys.Left, Keys.Up));
+      PlayerTwo.Initialize(content.Load<Texture2D>("player2"), playerTwoPosition, new PlayerControls(Keys.D, Keys.A, Keys.W));
       _map = content.Load<TiledMap>("map");
       _mapRenderer = new TiledMapRenderer(graphicsDevice, _map);
 
@@ -73,24 +74,33 @@ namespace Arcade.GameStates
     private void UpdatePlayers(GameTime gameTime)
     {
       // Player 1
-      if (currentKeyboardState.IsKeyDown(Keys.Left))
+      if (currentKeyboardState.IsKeyDown(PlayerOne.Controls.Left))
       {
-        PlayerOne.Position.X -= PlayerOne.Speed;
+        PlayerOne.Action(PlayerActions.WALK_LEFT);
       }
-      if (currentKeyboardState.IsKeyDown(Keys.Right))
+      if (currentKeyboardState.IsKeyDown(PlayerOne.Controls.Right))
       {
-        PlayerOne.Position.X += PlayerOne.Speed;
+        PlayerOne.Action(PlayerActions.WALK_RIGHT);
+      }
+      if (currentKeyboardState.IsKeyDown(PlayerOne.Controls.Jump) && !previousKeyboardState.IsKeyDown(PlayerOne.Controls.Jump)) {
+        PlayerOne.Action(PlayerActions.JUMP);
       }
 
       // Player 2
-      if (currentKeyboardState.IsKeyDown(Keys.A))
+      if (currentKeyboardState.IsKeyDown(PlayerTwo.Controls.Left))
       {
-        PlayerTwo.Position.X -= PlayerTwo.Speed;
+        PlayerTwo.Action(PlayerActions.WALK_LEFT);
       }
-      if (currentKeyboardState.IsKeyDown(Keys.D))
+      if (currentKeyboardState.IsKeyDown(PlayerTwo.Controls.Right))
       {
-        PlayerTwo.Position.X += PlayerTwo.Speed;
+        PlayerTwo.Action(PlayerActions.WALK_RIGHT);
       }
+      if (currentKeyboardState.IsKeyDown(PlayerTwo.Controls.Jump) && !previousKeyboardState.IsKeyDown(PlayerTwo.Controls.Jump)) {
+        PlayerTwo.Action(PlayerActions.JUMP);
+      }
+
+      PlayerOne.Update(gameTime);
+      PlayerTwo.Update(gameTime);
     }
   }
 }
