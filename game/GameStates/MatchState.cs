@@ -2,6 +2,9 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using MonoGame.Extended;
+using MonoGame.Extended.Tiled;
+using MonoGame.Extended.Tiled.Renderers;
 
 namespace Arcade.GameStates
 {
@@ -9,6 +12,9 @@ namespace Arcade.GameStates
   {
     public Player PlayerOne;
     public Player PlayerTwo;
+    private TiledMap _map;
+    private TiledMapRenderer _mapRenderer;
+    private OrthographicCamera _camera;
     private GraphicsDevice graphicsDevice;
     private KeyboardState currentKeyboardState;
     private KeyboardState previousKeyboardState;
@@ -20,16 +26,21 @@ namespace Arcade.GameStates
 
     public override void Initialize()
     {
+      _camera = new OrthographicCamera(graphicsDevice);
       PlayerOne = new Player();
       PlayerTwo = new Player();
     }
 
     public override void LoadContent(ContentManager content)
     {
+
       Vector2 playerOnePosition = new Vector2(graphicsDevice.Viewport.TitleSafeArea.X, graphicsDevice.Viewport.TitleSafeArea.Y + graphicsDevice.Viewport.TitleSafeArea.Height / 2);
       Vector2 playerTwoPosition = new Vector2(graphicsDevice.Viewport.TitleSafeArea.X + 200, graphicsDevice.Viewport.TitleSafeArea.Y + graphicsDevice.Viewport.TitleSafeArea.Height / 2);
       PlayerOne.Initialize(content.Load<Texture2D>("player1"), playerOnePosition);
       PlayerTwo.Initialize(content.Load<Texture2D>("player2"), playerTwoPosition);
+      _map = content.Load<TiledMap>("map");
+      _mapRenderer = new TiledMapRenderer(graphicsDevice, _map);
+
     }
 
     public override void UnloadContent()
@@ -49,6 +60,7 @@ namespace Arcade.GameStates
       graphicsDevice.Clear(Color.Black);
       spriteBatch.Begin();
       DrawPlayers(spriteBatch);
+      _mapRenderer.Draw(_camera.GetViewMatrix());
       spriteBatch.End();
     }
 
