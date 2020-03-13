@@ -13,9 +13,13 @@ namespace Arcade.GameStates
   {
     public Player PlayerOne;
     public Player PlayerTwo;
-    private TiledMap _map;
-    private TiledMapRenderer _mapRenderer;
-    private OrthographicCamera _camera;
+    private Texture2D lightMask;
+    private Effect lightEffect;
+    private RenderTarget2D lightsRenderTarget;
+    private RenderTarget2D mainRenderTarget;
+    private TiledMap map;
+    private TiledMapRenderer mapRenderer;
+    private OrthographicCamera camera;
     private GraphicsDevice graphicsDevice;
     private KeyboardState currentKeyboardState;
     private KeyboardState previousKeyboardState;
@@ -27,21 +31,24 @@ namespace Arcade.GameStates
 
     public override void Initialize()
     {
-      _camera = new OrthographicCamera(graphicsDevice);
+      camera = new OrthographicCamera(graphicsDevice);
+      PresentationParameters pp = graphicsDevice.PresentationParameters;
+      lightsRenderTarget = new RenderTarget2D(graphicsDevice, pp.BackBufferWidth, pp.BackBufferHeight);
+      mainRenderTarget = new RenderTarget2D(graphicsDevice, pp.BackBufferWidth, pp.BackBufferHeight);
       PlayerOne = new Player();
       PlayerTwo = new Player();
     }
 
     public override void LoadContent(ContentManager content)
     {
-
+      lightMask = content.Load<Texture2D>("lightmask");
+      lightEffect = content.Load<Effect>("lighteffect");
       Vector2 playerOnePosition = new Vector2(graphicsDevice.Viewport.TitleSafeArea.X, graphicsDevice.Viewport.TitleSafeArea.Y + graphicsDevice.Viewport.TitleSafeArea.Height / 2);
       Vector2 playerTwoPosition = new Vector2(graphicsDevice.Viewport.TitleSafeArea.X + 200, graphicsDevice.Viewport.TitleSafeArea.Y + graphicsDevice.Viewport.TitleSafeArea.Height / 2);
-      PlayerOne.Initialize(content.Load<Texture2D>("player1"), playerOnePosition, new PlayerControls(Keys.Right, Keys.Left, Keys.Up));
-      PlayerTwo.Initialize(content.Load<Texture2D>("player2"), playerTwoPosition, new PlayerControls(Keys.D, Keys.A, Keys.W));
-      _map = content.Load<TiledMap>("map");
-      _mapRenderer = new TiledMapRenderer(graphicsDevice, _map);
-
+      PlayerOne.Initialize(content.Load<Texture2D>("player1"), playerOnePosition, new PlayerControls(Keys.Right, Keys.Left, Keys.Up, Keys.Down));
+      PlayerTwo.Initialize(content.Load<Texture2D>("player2"), playerTwoPosition, new PlayerControls(Keys.D, Keys.A, Keys.W, Keys.S));
+      map = content.Load<TiledMap>("map");
+      mapRenderer = new TiledMapRenderer(graphicsDevice, map);
     }
 
     public override void UnloadContent()
@@ -58,10 +65,29 @@ namespace Arcade.GameStates
 
     public override void Draw(SpriteBatch spriteBatch)
     {
+      // Draw light scene
+      graphicsDevice.SetRenderTarget(lightsRenderTarget);
       graphicsDevice.Clear(Color.Black);
-      spriteBatch.Begin();
+      spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive);
+      spriteBatch.Draw(lightMask, PlayerOne.Position, null, Color.White, 0f, new Vector2(lightMask.Width / 2f, lightMask.Height / 2f), PlayerOne.IsHiding ? 0.2f : 1.5f, SpriteEffects.None, 0f);
+      spriteBatch.Draw(lightMask, PlayerTwo.Position, null, Color.White, 0f, new Vector2(lightMask.Width / 2f, lightMask.Height / 2f), PlayerTwo.IsHiding ? 0.2f : 1.5f, SpriteEffects.None, 0f);
+      spriteBatch.End();
+
+      // Draw main scene
+      graphicsDevice.SetRenderTarget(mainRenderTarget);
+      graphicsDevice.Clear(Color.Transparent);          
+      spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
       DrawPlayers(spriteBatch);
-      _mapRenderer.Draw(_camera.GetViewMatrix());
+      mapRenderer.Draw(camera.GetViewMatrix());
+      spriteBatch.End();
+
+      // Blend the scenes together
+      graphicsDevice.SetRenderTarget(null);
+      graphicsDevice.Clear(Color.Black);
+      spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
+      lightEffect.Parameters["lightMask"].SetValue(lightsRenderTarget);
+      lightEffect.CurrentTechnique.Passes[0].Apply();                         
+      spriteBatch.Draw(mainRenderTarget, Vector2.Zero, Color.White);               
       spriteBatch.End();
     }
 
@@ -85,6 +111,9 @@ namespace Arcade.GameStates
       if (currentKeyboardState.IsKeyDown(PlayerOne.Controls.Jump) && !previousKeyboardState.IsKeyDown(PlayerOne.Controls.Jump)) {
         PlayerOne.Action(PlayerActions.JUMP);
       }
+      if (currentKeyboardState.IsKeyDown(PlayerOne.Controls.Hide) && !previousKeyboardState.IsKeyDown(PlayerOne.Controls.Hide)) {
+        PlayerOne.Action(PlayerActions.HIDE);
+      }
 
       // Player 2
       if (currentKeyboardState.IsKeyDown(PlayerTwo.Controls.Left))
@@ -97,6 +126,9 @@ namespace Arcade.GameStates
       }
       if (currentKeyboardState.IsKeyDown(PlayerTwo.Controls.Jump) && !previousKeyboardState.IsKeyDown(PlayerTwo.Controls.Jump)) {
         PlayerTwo.Action(PlayerActions.JUMP);
+      }
+      if (currentKeyboardState.IsKeyDown(PlayerTwo.Controls.Hide) && !previousKeyboardState.IsKeyDown(PlayerTwo.Controls.Hide)) {
+        PlayerTwo.Action(PlayerActions.HIDE);
       }
 
       PlayerOne.Update(gameTime);

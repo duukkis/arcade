@@ -3,5 +3,6 @@ namespace Arcade.Entities {
     WALK_RIGHT,
     WALK_LEFT,
     JUMP,
+    HIDE,
   }
 }

@@ -19,8 +19,9 @@ namespace Arcade.Entities
     {
       get { return PlayerTexture.Height; }
     }
+    public bool IsHiding;
     public PlayerControls Controls { get; private set; }
-    private bool _isGrounded = false;
+    private bool isGrounded = false;
 
     public void Initialize(Texture2D texture, Vector2 position, PlayerControls playerControls)
     {
@@ -30,16 +31,17 @@ namespace Arcade.Entities
       Speed = 2.0f;
       JumpForce = 10f;
       Gravity = 0.5f;
+      IsHiding = false;
     }
 
     public void Update(GameTime gameTime)
     {
       if (Position.Y > 400.0f && CurrentVelocityY >= 0f)
       {
-        _isGrounded = true;
+        isGrounded = true;
         CurrentVelocityY = 0f;
       }
-      if (!_isGrounded)
+      if (!isGrounded)
       {
         Position.Y += CurrentVelocityY;
         CurrentVelocityY += Gravity;
@@ -48,7 +50,7 @@ namespace Arcade.Entities
 
     public void Draw(SpriteBatch spriteBatch)
     {
-      spriteBatch.Draw(PlayerTexture, Position, null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+      spriteBatch.Draw(PlayerTexture, Position, null, Color.White, 0f, new Vector2(Width / 2f, Height), 1f, SpriteEffects.None, 0f);
     }
 
     public void Action(PlayerActions action) {
@@ -62,15 +64,18 @@ namespace Arcade.Entities
         case PlayerActions.JUMP:
           Jump();
           break;
+        case PlayerActions.HIDE:
+          IsHiding = !IsHiding;
+          break;
         default:
           break;
       }
     }
 
     private void Jump() {
-      if (_isGrounded)
+      if (isGrounded)
       {
-        _isGrounded = false;
+        isGrounded = false;
         CurrentVelocityY = -JumpForce;
       }
     }
