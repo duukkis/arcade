@@ -75,7 +75,7 @@ namespace Arcade.GameStates
 
       // Draw main scene
       graphicsDevice.SetRenderTarget(mainRenderTarget);
-      graphicsDevice.Clear(Color.Transparent);          
+      graphicsDevice.Clear(Color.Transparent);
       spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
       DrawPlayers(spriteBatch);
       mapRenderer.Draw(camera.GetViewMatrix());
@@ -86,8 +86,8 @@ namespace Arcade.GameStates
       graphicsDevice.Clear(Color.Black);
       spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
       lightEffect.Parameters["lightMask"].SetValue(lightsRenderTarget);
-      lightEffect.CurrentTechnique.Passes[0].Apply();                         
-      spriteBatch.Draw(mainRenderTarget, Vector2.Zero, Color.White);               
+      lightEffect.CurrentTechnique.Passes[0].Apply();
+      spriteBatch.Draw(mainRenderTarget, Vector2.Zero, Color.White);
       spriteBatch.End();
     }
 
@@ -97,42 +97,32 @@ namespace Arcade.GameStates
       PlayerTwo.Draw(spriteBatch);
     }
 
+    private void UpdatePlayer(Player player, GameTime gameTime) {
+      if (currentKeyboardState.IsKeyDown(player.Controls.Left))
+      {
+        player.Action(PlayerActions.WALK_LEFT);
+      }
+      else if (currentKeyboardState.IsKeyDown(player.Controls.Right))
+      {
+        player.Action(PlayerActions.WALK_RIGHT);
+      }
+      else
+      {
+        player.Action(PlayerActions.STOP_WALKING);
+      }
+      if (currentKeyboardState.IsKeyDown(player.Controls.Jump) && !previousKeyboardState.IsKeyDown(player.Controls.Jump)) {
+        player.Action(PlayerActions.JUMP);
+      }
+      if (currentKeyboardState.IsKeyDown(player.Controls.Hide) && !previousKeyboardState.IsKeyDown(player.Controls.Hide)) {
+        player.Action(PlayerActions.HIDE);
+      }
+      player.Update(gameTime);
+    }
+
     private void UpdatePlayers(GameTime gameTime)
     {
-      // Player 1
-      if (currentKeyboardState.IsKeyDown(PlayerOne.Controls.Left))
-      {
-        PlayerOne.Action(PlayerActions.WALK_LEFT);
-      }
-      if (currentKeyboardState.IsKeyDown(PlayerOne.Controls.Right))
-      {
-        PlayerOne.Action(PlayerActions.WALK_RIGHT);
-      }
-      if (currentKeyboardState.IsKeyDown(PlayerOne.Controls.Jump) && !previousKeyboardState.IsKeyDown(PlayerOne.Controls.Jump)) {
-        PlayerOne.Action(PlayerActions.JUMP);
-      }
-      if (currentKeyboardState.IsKeyDown(PlayerOne.Controls.Hide) && !previousKeyboardState.IsKeyDown(PlayerOne.Controls.Hide)) {
-        PlayerOne.Action(PlayerActions.HIDE);
-      }
-
-      // Player 2
-      if (currentKeyboardState.IsKeyDown(PlayerTwo.Controls.Left))
-      {
-        PlayerTwo.Action(PlayerActions.WALK_LEFT);
-      }
-      if (currentKeyboardState.IsKeyDown(PlayerTwo.Controls.Right))
-      {
-        PlayerTwo.Action(PlayerActions.WALK_RIGHT);
-      }
-      if (currentKeyboardState.IsKeyDown(PlayerTwo.Controls.Jump) && !previousKeyboardState.IsKeyDown(PlayerTwo.Controls.Jump)) {
-        PlayerTwo.Action(PlayerActions.JUMP);
-      }
-      if (currentKeyboardState.IsKeyDown(PlayerTwo.Controls.Hide) && !previousKeyboardState.IsKeyDown(PlayerTwo.Controls.Hide)) {
-        PlayerTwo.Action(PlayerActions.HIDE);
-      }
-
-      PlayerOne.Update(gameTime);
-      PlayerTwo.Update(gameTime);
+      UpdatePlayer(PlayerOne, gameTime);
+      UpdatePlayer(PlayerTwo, gameTime);
     }
   }
 }

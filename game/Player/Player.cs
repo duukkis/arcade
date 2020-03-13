@@ -5,12 +5,17 @@ namespace Arcade.Entities
 {
   public class Player
   {
+    private static float Gravity = 0.5f;
+    private static float MovementAcceleration = 0.2f;
+    private static float StoppingAcceleration = 0.4f;
+    private static Vector2 MaximumVelocity = new Vector2(5f, 10f);
+    private static float JumpForce = 10f;
+
     public Texture2D PlayerTexture;
     public Vector2 Position;
-    public float Speed;
-    public float JumpForce;
-    public float Gravity;
-    public float CurrentVelocityY = 0f;
+    public Vector2 Velocity;
+    public Vector2 Acceleration;
+
     public int Width
     {
       get { return PlayerTexture.Width; }
@@ -28,26 +33,34 @@ namespace Arcade.Entities
       Controls = playerControls;
       PlayerTexture = texture;
       Position = position;
-      Speed = 2.0f;
-      JumpForce = 10f;
-      Gravity = 0.5f;
+      Acceleration.Y = Gravity;
       IsHiding = false;
     }
 
     public void Update(GameTime gameTime)
     {
-      if (Position.Y > 400.0f && CurrentVelocityY >= 0f)
+      if (Position.Y > 400.0f && Velocity.Y >= 0f)
       {
         isGrounded = true;
-        CurrentVelocityY = 0f;
+        Velocity.Y = 0f;
+        Acceleration.Y = 0f;
       }
       if (!isGrounded)
       {
-        Position.Y += CurrentVelocityY;
-        CurrentVelocityY += Gravity;
+        Acceleration.Y = Gravity;
       }
+      Velocity.X = GetLimitedVelocity(Velocity.X + Acceleration.X, MaximumVelocity.X);
+      Velocity.Y = GetLimitedVelocity(Velocity.Y + Acceleration.Y, MaximumVelocity.Y);
+      Position += Velocity;
     }
 
+    private float GetLimitedVelocity(float velocity, float limit) {
+      if (velocity >= 0) {
+        return MathHelper.Min(velocity, limit);
+      } else {
+        return MathHelper.Max(velocity, -limit);
+      }
+    }
     public void Draw(SpriteBatch spriteBatch)
     {
       spriteBatch.Draw(PlayerTexture, Position, null, Color.White, 0f, new Vector2(Width / 2f, Height), 1f, SpriteEffects.None, 0f);
@@ -56,10 +69,22 @@ namespace Arcade.Entities
     public void Action(PlayerActions action) {
       switch(action) {
         case PlayerActions.WALK_RIGHT:
-          Position.X += Speed;
+          if (Velocity.X <= 0) {
+            Acceleration.X = StoppingAcceleration;
+          } else {
+            Acceleration.X = MovementAcceleration;
+          }
           break;
         case PlayerActions.WALK_LEFT:
-          Position.X -= Speed;
+          if (Velocity.X >= 0) {
+            Acceleration.X = -StoppingAcceleration;
+          } else {
+            Acceleration.X = -MovementAcceleration;
+          }
+          break;
+        case PlayerActions.STOP_WALKING:
+          Acceleration.X = 0;
+          Velocity.X *= 0.9f;
           break;
         case PlayerActions.JUMP:
           Jump();
@@ -76,7 +101,7 @@ namespace Arcade.Entities
       if (isGrounded)
       {
         isGrounded = false;
-        CurrentVelocityY = -JumpForce;
+        Velocity.Y = -JumpForce;
       }
     }
   }
