@@ -83,7 +83,7 @@ namespace Hippa.Screens
             PlayerOne = entityManager.AddEntity(new Player());
             PlayerTwo = entityManager.AddEntity(new Player());
 
-            Vector2 playerOnePosition = new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X, GraphicsDevice.Viewport.TitleSafeArea.Y + GraphicsDevice.Viewport.TitleSafeArea.Height / 2);
+            Vector2 playerOnePosition = new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X + 50, GraphicsDevice.Viewport.TitleSafeArea.Y + GraphicsDevice.Viewport.TitleSafeArea.Height / 2);
             Vector2 playerTwoPosition = new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X + 200, GraphicsDevice.Viewport.TitleSafeArea.Y + GraphicsDevice.Viewport.TitleSafeArea.Height / 2);
             PlayerOne.Initialize(Content.Load<Texture2D>("player1"), playerOnePosition, new PlayerControls(Keys.Right, Keys.Left, Keys.Up, Keys.Down));
             PlayerTwo.Initialize(Content.Load<Texture2D>("player2"), playerTwoPosition, new PlayerControls(Keys.D, Keys.A, Keys.W, Keys.S));

@@ -17,7 +17,8 @@ namespace Hippa
         public Hippa()
         {
             graphicsDeviceManager = new GraphicsDeviceManager(this);
-            
+            graphicsDeviceManager.PreferredBackBufferHeight = 480;
+            graphicsDeviceManager.PreferredBackBufferWidth = 720;
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
 

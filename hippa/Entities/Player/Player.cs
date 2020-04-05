@@ -122,12 +122,14 @@ namespace Hippa.Entities.Player
 
         public void OnCollision(CollisionEventArgs collisionInfo)
         {
-            if (collisionInfo.Other.GetType() == typeof(StationaryCollisionObject) &&
-                collisionInfo.PenetrationVector.Y > 0)
+            if (collisionInfo.Other.GetType() == typeof(StationaryCollisionObject))
             {
-                isGrounded = true;
-                Acceleration.Y = 0f;
-                Position -= collisionInfo.PenetrationVector;
+                if (collisionInfo.PenetrationVector.Y > 0) {
+                    isGrounded = true;
+                    Acceleration.Y = 0f;
+                    Position -= collisionInfo.PenetrationVector;
+                }
+                
             }
 
         }
