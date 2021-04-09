@@ -29,7 +29,7 @@ jobs:
       with:
         #
         godot_executable_download_url: https://downloads.tuxfamily.org/godotengine/3.2.3/mono/Godot_v3.2.3-stable_mono_linux_headless_64.zip
-        godot_export_templates_download_url: https://github.com/hiulit/Unofficial-Godot-Engine-Raspberry-Pi/releases/download/v1.2.0/godot_3.2.3_rpi4_export-template.zip
+        godot_export_templates_download_url: https://downloads.tuxfamily.org/godotengine/3.2.3/mono/Godot_v3.2.3-stable_mono_export_templates.tpz
         relative_project_path: ./hagatonhippa
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
