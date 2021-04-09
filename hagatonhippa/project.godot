@@ -15,7 +15,7 @@ _global_script_class_icons={
 
 [application]
 
-config/name="Hippa"
+config/name="HagatonHippa"
 config/description="Hippapeli made in Hagaton 2021
 Pentti, Duukkis, Juho, Risto and Jaakko."
 run/main_scene="res://world.tscn"

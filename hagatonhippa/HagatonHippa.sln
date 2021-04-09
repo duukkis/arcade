@@ -1,6 +1,6 @@
 ﻿Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kinematic Character 2D", "Kinematic Character 2D.csproj", "{6740BEF5-B063-4564-AE4E-E73ACF718F29}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HagatonHippa", "HagatonHippa.csproj", "{6740BEF5-B063-4564-AE4E-E73ACF718F29}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
