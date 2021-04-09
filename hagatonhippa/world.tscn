@@ -142,7 +142,7 @@ playback_process_mode = 0
 anims/leftright = SubResource( 4 )
 
 [node name="MovingPlatform2" type="KinematicBody2D" parent="."]
-position = Vector2( 88.3493, 284.689 )
+position = Vector2( 234.43, 152 )
 
 [node name="Collision" type="CollisionShape2D" parent="MovingPlatform2"]
 shape = SubResource( 3 )
