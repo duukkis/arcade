@@ -3,7 +3,7 @@
 name: CI
 
 # Whenever a push is made to the master branch then run the job
-on: 
+on:
   push:
     branches:
       - master
@@ -16,7 +16,7 @@ jobs:
     # Job name, can be anything
     name: Export Game Job
     steps:
-      # Always include the checkout step so that 
+      # Always include the checkout step so that
       # your project is available for Godot to export
     - name: checkout
       uses: actions/checkout@v2.3.4
@@ -27,9 +27,9 @@ jobs:
       # Use latest version (see releases for all versions)
       uses: firebelley/godot-export@v2.6.1
       with:
-        # 
+        #
         godot_executable_download_url: https://downloads.tuxfamily.org/godotengine/3.2.3/mono/Godot_v3.2.3-stable_mono_linux_headless_64.zip
         godot_export_templates_download_url: https://github.com/hiulit/Unofficial-Godot-Engine-Raspberry-Pi/releases/download/v1.2.0/godot_3.2.3_rpi4_export-template.zip
-        relative_project_path: ./
+        relative_project_path: ./hagatonhippa
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
