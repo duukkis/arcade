@@ -3,44 +3,44 @@ using System;
 
 public class Player : KinematicBody2D
 {
-    [Export] public int WALK_FORCE = 600;
-    [Export] public int WALK_MAX_SPEED = 200;
-    [Export] public int STOP_FORCE = 2000;
-    [Export] public int JUMP_SPEED = 200;
-    public Vector2 Velocity;
-    private int gravity;
+	[Export] public int WalkForce = 600;
+	[Export] public int WalkMaxSpeed = 200;
+	[Export] public int StopForce = 2000;
+	[Export] public int JumpSpeed = 200;
+	private Vector2 _velocity;
+	private int _gravity;
 
-    public override void _Ready()
-    {
-        gravity = (int)ProjectSettings.GetSetting("physics/2d/default_gravity");
-    }
+	public override void _Ready()
+	{
+		_gravity = (int)ProjectSettings.GetSetting("physics/2d/default_gravity");
+	}
 
-    public override void _PhysicsProcess(float delta)
-    {
-        HandleMovement(delta);
-    }
+	public override void _PhysicsProcess(float delta)
+	{
+		HandleMovement(delta);
+	}
 
-    private void HandleMovement(float delta)
-    {
-        float walk = WALK_FORCE * (Input.GetActionStrength("move_right") - Input.GetActionStrength("move_left"));
-        if (Mathf.Abs(walk) < WALK_FORCE * 0.2)
-        {
-            Velocity.x = Mathf.MoveToward(Velocity.x, 0, STOP_FORCE * delta);
-        }
-        else
-        {
-            Velocity.x += walk * delta;
-        }
+	private void HandleMovement(float delta)
+	{
+		float walk = WalkForce * (Input.GetActionStrength("move_right") - Input.GetActionStrength("move_left"));
+		if (Mathf.Abs(walk) < WalkForce * 0.2)
+		{
+			_velocity.x = Mathf.MoveToward(_velocity.x, 0, StopForce * delta);
+		}
+		else
+		{
+			_velocity.x += walk * delta;
+		}
 
-        Velocity.x = Mathf.Clamp(Velocity.x, -WALK_MAX_SPEED, WALK_MAX_SPEED);
+		_velocity.x = Mathf.Clamp(_velocity.x, -WalkMaxSpeed, WalkMaxSpeed);
 
-        Velocity.y += gravity * delta;
+		_velocity.y += _gravity * delta;
 
-        Velocity = MoveAndSlideWithSnap(Velocity, Vector2.Down, Vector2.Up);
+		_velocity = MoveAndSlideWithSnap(_velocity, Vector2.Down, Vector2.Up);
 
-        if (IsOnFloor() && Input.IsActionJustPressed("jump"))
-        {
-            Velocity.y = -JUMP_SPEED;
-        }
-    }
+		if (IsOnFloor() && Input.IsActionJustPressed("jump"))
+		{
+			_velocity.y = -JumpSpeed;
+		}
+	}
 }
