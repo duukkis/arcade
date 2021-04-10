@@ -1,11 +1,13 @@
-[gd_scene load_steps=19 format=2]
+[gd_scene load_steps=24 format=2]
 
+[ext_resource path="res://GameState.cs" type="Script" id=1]
 [ext_resource path="res://level/obstacle.png" type="Texture" id=2]
 [ext_resource path="res://player/player.tscn" type="PackedScene" id=3]
 [ext_resource path="res://level/princess.png" type="Texture" id=4]
 [ext_resource path="res://level/circle.png" type="Texture" id=5]
 [ext_resource path="res://level/long_obstacle.png" type="Texture" id=6]
 [ext_resource path="res://level/princess.gd" type="Script" id=7]
+[ext_resource path="res://ProgressBar.cs" type="Script" id=9]
 
 [sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 8, 8 )
@@ -105,9 +107,9 @@ tracks/0/imported = false
 tracks/0/enabled = true
 tracks/0/keys = {
 "times": PoolRealArray( 0, 5, 10, 15 ),
-"transitions": PoolRealArray( -2, -2, -2, -2 ),
+"transitions": PoolRealArray( -2, -21.1121, -2, -2 ),
 "update": 0,
-"values": [ 0.0, 90.0, 0.0, -90.0 ]
+"values": [ 0.0, 180.0, 0.0, -90.0 ]
 }
 
 [sub_resource type="RectangleShape2D" id=11]
@@ -116,7 +118,17 @@ extents = Vector2( 8, 8 )
 [sub_resource type="RectangleShape2D" id=12]
 extents = Vector2( 32, 8 )
 
-[node name="World" type="Node2D"]
+[sub_resource type="ParticlesMaterial" id=13]
+
+[sub_resource type="Shader" id=14]
+
+[sub_resource type="ShaderMaterial" id=15]
+resource_local_to_scene = true
+render_priority = 2
+next_pass = SubResource( 13 )
+shader = SubResource( 14 )
+
+[node name="HippaWorld" type="Node2D"]
 
 [node name="TileMap" type="TileMap" parent="."]
 tile_set = SubResource( 2 )
@@ -128,7 +140,7 @@ tile_data = PoolIntArray( -720908, 0, 0, -720907, 0, 0, -720906, 0, 0, -720905, 
 position = Vector2( 233.06, 223.436 )
 
 [node name="MovingPlatform1" type="KinematicBody2D" parent="."]
-position = Vector2( 274.142, 152 )
+position = Vector2( 184, 152 )
 
 [node name="Collision" type="CollisionShape2D" parent="MovingPlatform1"]
 shape = SubResource( 3 )
@@ -142,7 +154,7 @@ playback_process_mode = 0
 anims/leftright = SubResource( 4 )
 
 [node name="MovingPlatform2" type="KinematicBody2D" parent="."]
-position = Vector2( 234.43, 152 )
+position = Vector2( 184, 152 )
 
 [node name="Collision" type="CollisionShape2D" parent="MovingPlatform2"]
 shape = SubResource( 3 )
@@ -164,6 +176,7 @@ script = ExtResource( 7 )
 shape = SubResource( 7 )
 
 [node name="Sprite" type="Sprite" parent="Princess"]
+position = Vector2( 170.458, 119.232 )
 texture = ExtResource( 4 )
 
 [node name="WinText" type="Label" parent="."]
@@ -224,6 +237,7 @@ one_way_collision = true
 
 [node name="Circle" type="KinematicBody2D" parent="."]
 position = Vector2( 241.169, 304.126 )
+rotation = 3.14159
 
 [node name="Sprite" type="Sprite" parent="Circle"]
 texture = ExtResource( 5 )
@@ -266,4 +280,23 @@ shape = SubResource( 12 )
 [node name="Camera2D" type="Camera2D" parent="."]
 offset = Vector2( 265, 247 )
 current = true
+
+[node name="Gui" type="CanvasLayer" parent="."]
+
+[node name="ProgressBar" type="ProgressBar" parent="Gui"]
+margin_left = 36.2132
+margin_top = 48.2132
+margin_right = 503.213
+margin_bottom = 96.2132
+script = ExtResource( 9 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="GameState" type="Node2D" parent="."]
+modulate = Color( 0, 0, 0, 1 )
+light_mask = 59797
+material = SubResource( 15 )
+position = Vector2( 239.347, 154.108 )
+script = ExtResource( 1 )
 [connection signal="body_entered" from="Princess" to="Princess" method="_on_body_entered"]

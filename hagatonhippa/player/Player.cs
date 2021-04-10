@@ -41,6 +41,7 @@ public class Player : KinematicBody2D
 		if (IsOnFloor() && Input.IsActionJustPressed("jump"))
 		{
 			_velocity.y = -JumpSpeed;
+			GD.Print("här");
 		}
 	}
 }
