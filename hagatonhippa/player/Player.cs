@@ -5,15 +5,18 @@ public class Player : KinematicBody2D
 	[Export] public int BaseWalkForce = 600;
 	[Export] public int BaseMaxSpeed = 100;
 	[Export] public int BaseStopForce = 1600;
-	[Export] public int JumpSpeed = 200;
+	[Export] public int JumpSpeed = 250;
 	[Export] public string JumpAction;
 	[Export] public string MoveRightAction;
 	[Export] public string MoveLeftAction;
 
 	private bool _hasHaste = false;
 	private bool _hasInvisibility = false;
+	private bool _hasDoubleJump = false;
 	private float _hasteTimer = 0;
 	private float _invisibilityTimer = 0;
+	private float _doubleJumpTimer = 0;
+	private bool _doubleJumpReady = false;
 	private Vector2 _velocity;
 	private int _gravity;
 
@@ -54,7 +57,7 @@ public class Player : KinematicBody2D
 	public void GiveHaste()
 	{
 		_hasHaste = true;
-		_hasteTimer = 5;
+		_hasteTimer = 7;
 	}
 	
 	public void GiveInvisibility()
@@ -63,6 +66,12 @@ public class Player : KinematicBody2D
 		_light.Hide();
 		_hasInvisibility = true;
 		_invisibilityTimer = 5;
+	}
+		
+	public void GiveDoubleJump()
+	{
+		_hasDoubleJump = true;
+		_doubleJumpTimer = 12;
 	}
 
 	private void HandleMovement(float delta)
@@ -89,7 +98,15 @@ public class Player : KinematicBody2D
 		if (IsOnFloor() && Input.IsActionJustPressed(JumpAction))
 		{
 			_velocity.y = -JumpSpeed;
-			GD.Print("här");
+		} else if (_doubleJumpReady && _hasDoubleJump && Input.IsActionJustPressed(JumpAction))
+		{
+			_velocity.y = -JumpSpeed;
+			_doubleJumpReady = false;
+		}
+		
+		if (IsOnFloor())
+		{
+			_doubleJumpReady = true;
 		}
 	}
 	
@@ -97,6 +114,7 @@ public class Player : KinematicBody2D
 	{
 		_hasteTimer -= delta;
 		_invisibilityTimer -= delta;
+		_doubleJumpTimer -= delta;
 		
 		if (_hasteTimer <= 0)
 		{
@@ -110,6 +128,12 @@ public class Player : KinematicBody2D
 			_animatedSprite.Show();
 			_light.Show();
 			_invisibilityTimer = 0;
+		}
+		
+		if (_doubleJumpTimer <= 0)
+		{
+			_hasDoubleJump = false;
+			_doubleJumpTimer = 0;
 		}
 	}
 }
