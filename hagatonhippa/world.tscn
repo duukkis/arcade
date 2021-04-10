@@ -1,11 +1,9 @@
-[gd_scene load_steps=19 format=2]
+[gd_scene load_steps=16 format=2]
 
 [ext_resource path="res://level/obstacle.png" type="Texture" id=2]
 [ext_resource path="res://player/player.tscn" type="PackedScene" id=3]
-[ext_resource path="res://level/princess.png" type="Texture" id=4]
 [ext_resource path="res://level/circle.png" type="Texture" id=5]
 [ext_resource path="res://level/long_obstacle.png" type="Texture" id=6]
-[ext_resource path="res://level/princess.gd" type="Script" id=7]
 
 [sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 8, 8 )
@@ -85,9 +83,6 @@ tracks/0/keys = {
 "values": [ Vector2( 88.3493, 296 ), Vector2( 88.3493, 296 ), Vector2( 88.3493, 152 ), Vector2( 88.3493, 152 ) ]
 }
 
-[sub_resource type="RectangleShape2D" id=7]
-extents = Vector2( 8, 8 )
-
 [sub_resource type="RectangleShape2D" id=8]
 extents = Vector2( 10, 4 )
 
@@ -164,16 +159,6 @@ autoplay = "updown"
 playback_process_mode = 0
 anims/leftright = SubResource( 5 )
 anims/updown = SubResource( 6 )
-
-[node name="Princess" type="Area2D" parent="."]
-position = Vector2( 97, 72 )
-script = ExtResource( 7 )
-
-[node name="Collision" type="CollisionShape2D" parent="Princess"]
-shape = SubResource( 7 )
-
-[node name="Sprite" type="Sprite" parent="Princess"]
-texture = ExtResource( 4 )
 
 [node name="WinText" type="Label" parent="."]
 visible = false
@@ -275,4 +260,3 @@ shape = SubResource( 12 )
 [node name="Camera2D" type="Camera2D" parent="."]
 offset = Vector2( 265, 247 )
 current = true
-[connection signal="body_entered" from="Princess" to="Princess" method="_on_body_entered"]
