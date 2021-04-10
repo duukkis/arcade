@@ -178,11 +178,33 @@ anchor_left = -0.362
 anchor_top = -0.382
 anchor_right = 1.358
 anchor_bottom = 0.196
-margin_left = 286.5
-margin_top = 233.725
-margin_right = -266.1
-margin_bottom = -22.3855
+margin_left = 242.86
+margin_top = 234.09
+margin_right = -240.74
+margin_bottom = -22.02
+percent_visible = false
 script = ExtResource( 10 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="CanvasLayer"]
+margin_left = 60.7997
+margin_top = 52.7521
+margin_right = 108.8
+margin_bottom = 66.7521
+rect_pivot_offset = Vector2( 25.8593, 7.67799 )
+text = "Paavo L"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label2" type="Label" parent="CanvasLayer"]
+margin_left = 432.818
+margin_top = 53.1418
+margin_right = 472.818
+margin_bottom = 67.1418
+text = "Tytti Y"
 __meta__ = {
 "_edit_use_anchors_": false
 }
