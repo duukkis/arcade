@@ -12,21 +12,38 @@ public class Player : KinematicBody2D
 	[Export] public GameState.hippa HippaID;
 	private Vector2 _velocity;
 	private int _gravity;
+	private GameState _gameState;
 
 	public override void _Ready()
 	{
 		_gravity = (int)ProjectSettings.GetSetting("physics/2d/default_gravity");
+		_gameState = GetNode<GameState>("../GameState");
 	}
 
 	public override void _PhysicsProcess(float delta)
 	{
 		HandleMovement(delta);
+		HandleCollision();
 	}
 	
-
+	private void HandleCollision() {
+		for (int i =0; i < GetSlideCount(); i++) {
+			KinematicCollision2D collision = GetSlideCollision(i);			
+			if (collision.GetCollider() is Player)	
+			{
+				_gameState.changeHippa();
+			}
+		}
+	}
 
 	private void HandleMovement(float delta)
 	{
+		// Player is the new hippa and is freezed.
+		if (_gameState.hippaPlayer == HippaID && _gameState.isHippaFreeze)
+		{
+			return;
+		}
+		
 		float walk = WalkForce * (Input.GetActionStrength(MoveRightAction) - Input.GetActionStrength(MoveLeftAction));
 		if (Mathf.Abs(walk) < WalkForce * 0.2)
 		{

@@ -1,20 +1,16 @@
-using Godot;
+using Godot;	
 using System;
 
 public class GameState : Node2D
 {	
-	/* 
-	Player progress
+	[Export] public double freezeTime;
+	[Export] public double maxProgress;
 	
-	Player1 			   Player2
-	120  ------  0  ------ -120
-	
-	*/
-		
 	public double progress {private set; get;}
-	public const double maxProgress = 120;
-	private const double progressPerSec = 4;
+	private double freezeTimer;
 	
+	private const double progressPerSec = 4;
+		
 	public enum hippa : int 
 	{
 		player1 = 1,
@@ -22,7 +18,19 @@ public class GameState : Node2D
 		player2 = -1	
 	}
 	
-	public hippa hippaPlayer { get; set; }
+	public hippa hippaPlayer {get; private set;}
+	
+	public void changeHippa() {
+		if (!isHippaFreeze) {
+			GD.Print("New hippa is " + hippaPlayer);
+ 			hippaPlayer = (hippa)((int)hippaPlayer*-1);
+			freezeTimer = freezeTime;
+		}
+	}
+	
+	public bool isHippaFreeze {get {
+		return (freezeTimer > 0);
+	}}
 	
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
@@ -35,7 +43,10 @@ public class GameState : Node2D
 
 	public override void _Process(float delta)
 	{
+		if (isHippaFreeze) {
+			GD.Print("Freeze left:" + freezeTimer);
+			freezeTimer -= delta;
+		}
 		progress += delta * progressPerSec * (int)hippaPlayer;
-		GD.Print("Progress:" + progress);
 	}
 }

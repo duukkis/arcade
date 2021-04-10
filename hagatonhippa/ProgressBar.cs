@@ -18,6 +18,6 @@ public class ProgressBar : Godot.ProgressBar
 //  // Called every frame. 'delta' is the elapsed time since the previous frame.
    public override void _Process(float delta)
 	{
-  		Value = (gameState.progress + GameState.maxProgress) / (GameState.maxProgress * 2 / 100); 
+  		Value = (gameState.progress + gameState.maxProgress) / (gameState.maxProgress * 2 / 100); 
 	}
 }
