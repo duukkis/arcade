@@ -1,5 +1,4 @@
 using Godot;
-using System;
 
 public class Player : KinematicBody2D
 {
@@ -7,6 +6,9 @@ public class Player : KinematicBody2D
 	[Export] public int WalkMaxSpeed = 200;
 	[Export] public int StopForce = 2000;
 	[Export] public int JumpSpeed = 200;
+	[Export] public string JumpAction;
+	[Export] public string MoveRightAction;
+	[Export] public string MoveLeftAction;
 	private Vector2 _velocity;
 	private int _gravity;
 
@@ -22,7 +24,7 @@ public class Player : KinematicBody2D
 
 	private void HandleMovement(float delta)
 	{
-		float walk = WalkForce * (Input.GetActionStrength("move_right") - Input.GetActionStrength("move_left"));
+		float walk = WalkForce * (Input.GetActionStrength(MoveRightAction) - Input.GetActionStrength(MoveLeftAction));
 		if (Mathf.Abs(walk) < WalkForce * 0.2)
 		{
 			_velocity.x = Mathf.MoveToward(_velocity.x, 0, StopForce * delta);
@@ -38,7 +40,7 @@ public class Player : KinematicBody2D
 
 		_velocity = MoveAndSlideWithSnap(_velocity, Vector2.Down, Vector2.Up);
 
-		if (IsOnFloor() && Input.IsActionJustPressed("jump"))
+		if (IsOnFloor() && Input.IsActionJustPressed(JumpAction))
 		{
 			_velocity.y = -JumpSpeed;
 		}
