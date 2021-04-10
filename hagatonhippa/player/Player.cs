@@ -5,7 +5,7 @@ public class Player : KinematicBody2D
 	[Export] public int BaseWalkForce = 600;
 	[Export] public int BaseMaxSpeed = 100;
 	[Export] public int BaseStopForce = 1600;
-	[Export] public int JumpSpeed = 250;
+	[Export] public int JumpSpeed = 300;
 	[Export] public string JumpAction;
 	[Export] public string MoveRightAction;
 	[Export] public string MoveLeftAction;
