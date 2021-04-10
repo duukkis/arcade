@@ -9,6 +9,7 @@ public class Player : KinematicBody2D
 	[Export] public string JumpAction;
 	[Export] public string MoveRightAction;
 	[Export] public string MoveLeftAction;
+	[Export] public GameState.hippa HippaID;
 
 	private bool _hasHaste = false;
 	private bool _hasInvisibility = false;
@@ -19,6 +20,7 @@ public class Player : KinematicBody2D
 	private bool _doubleJumpReady = false;
 	private Vector2 _velocity;
 	private int _gravity;
+	private GameState _gameState;
 
 	private AnimatedSprite _animatedSprite;
 	private Light2D _light;
@@ -26,6 +28,7 @@ public class Player : KinematicBody2D
 	public override void _Ready()
 	{
 		_gravity = (int)ProjectSettings.GetSetting("physics/2d/default_gravity");
+		_gameState = GetNode<GameState>("../GameState");
 		_animatedSprite = GetNode<AnimatedSprite>("AnimatedSprite");
 		_light = GetNode<Light2D>("Light2D");
 	}
@@ -33,6 +36,7 @@ public class Player : KinematicBody2D
 	public override void _PhysicsProcess(float delta)
 	{
 		HandleMovement(delta);
+		HandleCollision();
 		HandleAnimation(delta);
 		DecrementPowerups(delta);
 	}
@@ -51,6 +55,16 @@ public class Player : KinematicBody2D
 		else
 		{
 			_animatedSprite.Play("idle");
+		}
+	}
+
+	private void HandleCollision() {
+		for (int i =0; i < GetSlideCount(); i++) {
+			KinematicCollision2D collision = GetSlideCollision(i);			
+			if (collision.GetCollider() is Player)	
+			{
+				_gameState.changeHippa();
+			}
 		}
 	}
 
@@ -76,6 +90,11 @@ public class Player : KinematicBody2D
 
 	private void HandleMovement(float delta)
 	{
+		// Player is the new hippa and is freezed.
+		if (_gameState.hippaPlayer == HippaID && _gameState.isHippaFreeze)
+		{
+			return;
+		}
 		float maxSpeed = _hasHaste ? BaseMaxSpeed * 2 : BaseMaxSpeed;
 		float walkForce = _hasHaste ? BaseWalkForce * 2 : BaseWalkForce;
 		float stopForce = _hasHaste ? BaseStopForce * 2 : BaseStopForce;

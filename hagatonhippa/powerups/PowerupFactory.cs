@@ -14,7 +14,7 @@ public class PowerupFactory : Node
 
 	public override void _Process(float delta)
   	{
-		_timer _= delta;
+		_timer -= delta;
 		
 		if (_timer <= 0)
 		{
