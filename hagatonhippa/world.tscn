@@ -271,12 +271,14 @@ position = Vector2( 142.189, 209.482 )
 JumpAction = "player1_jump"
 MoveRightAction = "player1_move_right"
 MoveLeftAction = "player1_move_left"
+HippaID = 1
 
 [node name="Player2" parent="." instance=ExtResource( 3 )]
 position = Vector2( 60.06, 82.436 )
 JumpAction = "player2_jump"
 MoveRightAction = "player2_move_right"
 MoveLeftAction = "player2_move_left"
+HippaID = 9223372036854775807
 
 [node name="GameState" type="Node2D" parent="."]
 script = ExtResource( 7 )

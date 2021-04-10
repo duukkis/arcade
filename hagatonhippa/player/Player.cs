@@ -9,6 +9,7 @@ public class Player : KinematicBody2D
 	[Export] public string JumpAction;
 	[Export] public string MoveRightAction;
 	[Export] public string MoveLeftAction;
+	[Export] public GameState.hippa HippaID;
 	private Vector2 _velocity;
 	private int _gravity;
 
@@ -21,6 +22,8 @@ public class Player : KinematicBody2D
 	{
 		HandleMovement(delta);
 	}
+	
+
 
 	private void HandleMovement(float delta)
 	{
@@ -43,7 +46,6 @@ public class Player : KinematicBody2D
 		if (IsOnFloor() && Input.IsActionJustPressed(JumpAction))
 		{
 			_velocity.y = -JumpSpeed;
-			GD.Print("här");
 		}
 	}
 }

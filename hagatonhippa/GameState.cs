@@ -12,22 +12,25 @@ public class GameState : Node2D
 	*/
 		
 	public double progress {private set; get;}
-	private const double maxProgress = 120;
+	public const double maxProgress = 120;
 	private const double progressPerSec = 4;
-	enum hippa : int 
+	
+	public enum hippa : int 
 	{
 		player1 = 1,
 		nobody = 0,
 		player2 = -1	
 	}
 	
-	private hippa hippaPlayer = (hippa)1;
+	public hippa hippaPlayer { get; set; }
 	
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
 		GD.Print("Start Game Engine");
 		progress = 0;
+		// for testing
+		hippaPlayer = hippa.player1;
 	}
 
 	public override void _Process(float delta)
