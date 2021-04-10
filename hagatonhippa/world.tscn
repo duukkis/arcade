@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=2]
+[gd_scene load_steps=17 format=2]
 
 [ext_resource path="res://level/obstacle.png" type="Texture" id=2]
 [ext_resource path="res://player/player.tscn" type="PackedScene" id=3]
@@ -84,9 +84,6 @@ tracks/0/keys = {
 "values": [ Vector2( 88.3493, 296 ), Vector2( 88.3493, 296 ), Vector2( 88.3493, 152 ), Vector2( 88.3493, 152 ) ]
 }
 
-[sub_resource type="RectangleShape2D" id=7]
-extents = Vector2( 8, 8 )
-
 [sub_resource type="RectangleShape2D" id=8]
 extents = Vector2( 10, 4 )
 
@@ -126,20 +123,6 @@ tile_data = PoolIntArray( -720908, 0, 0, -720907, 0, 0, -720906, 0, 0, -720905, 
 [node name="CanvasModulate" type="CanvasModulate" parent="."]
 color = Color( 0, 0, 0, 0.470588 )
 
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
-
-[node name="Player1" parent="CanvasLayer" instance=ExtResource( 3 )]
-position = Vector2( 360.06, 240.436 )
-JumpAction = "player1_jump"
-MoveRightAction = "player1_move_right"
-MoveLeftAction = "player1_move_left"
-
-[node name="Player2" parent="CanvasLayer" instance=ExtResource( 3 )]
-position = Vector2( 60.06, 82.436 )
-JumpAction = "player2_jump"
-MoveRightAction = "player2_move_right"
-MoveLeftAction = "player2_move_left"
-
 [node name="MovingPlatform1" type="KinematicBody2D" parent="."]
 position = Vector2( 274.142, 152 )
 
@@ -168,15 +151,6 @@ autoplay = "updown"
 playback_process_mode = 0
 anims/leftright = SubResource( 5 )
 anims/updown = SubResource( 6 )
-
-[node name="Princess" type="Area2D" parent="."]
-position = Vector2( 97, 72 )
-
-[node name="Collision" type="CollisionShape2D" parent="Princess"]
-shape = SubResource( 7 )
-
-[node name="Sprite" type="Sprite" parent="Princess"]
-texture = ExtResource( 4 )
 
 [node name="WinText" type="Label" parent="."]
 visible = false
@@ -289,4 +263,15 @@ stretch_mode = 2
 __meta__ = {
 "_edit_use_anchors_": false
 }
-[connection signal="body_entered" from="Princess" to="Princess" method="_on_body_entered"]
+
+[node name="Player1" parent="." instance=ExtResource( 3 )]
+position = Vector2( 142.189, 209.482 )
+JumpAction = "player1_jump"
+MoveRightAction = "player1_move_right"
+MoveLeftAction = "player1_move_left"
+
+[node name="Player2" parent="." instance=ExtResource( 3 )]
+position = Vector2( 60.06, 82.436 )
+JumpAction = "player2_jump"
+MoveRightAction = "player2_move_right"
+MoveLeftAction = "player2_move_left"

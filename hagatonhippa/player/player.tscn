@@ -8,7 +8,7 @@
 light_mode = 1
 
 [sub_resource type="RectangleShape2D" id=2]
-extents = Vector2( 7, 7 )
+extents = Vector2( 7.72037, 8.17135 )
 
 [node name="Player" type="KinematicBody2D"]
 script = ExtResource( 1 )
@@ -19,7 +19,6 @@ material = SubResource( 1 )
 texture = ExtResource( 2 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2( -0.315559, 0.157784 )
 shape = SubResource( 2 )
 
 [node name="Light2D" type="Light2D" parent="."]
