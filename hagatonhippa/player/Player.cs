@@ -9,43 +9,67 @@ public class Player : KinematicBody2D
 	[Export] public string JumpAction;
 	[Export] public string MoveRightAction;
 	[Export] public string MoveLeftAction;
-	public bool HasHaste = false;
-	public bool HasInvisibility = false;
+
+	private bool _hasHaste = false;
+	private bool _hasInvisibility = false;
 	private float _hasteTimer = 0;
 	private float _invisibilityTimer = 0;
 	private Vector2 _velocity;
 	private int _gravity;
 
+	private AnimatedSprite _animatedSprite;
+	private Light2D _light;
+
 	public override void _Ready()
 	{
 		_gravity = (int)ProjectSettings.GetSetting("physics/2d/default_gravity");
+		_animatedSprite = GetNode<AnimatedSprite>("AnimatedSprite");
+		_light = GetNode<Light2D>("Light2D");
 	}
 
 	public override void _PhysicsProcess(float delta)
 	{
 		HandleMovement(delta);
+		HandleAnimation(delta);
 		DecrementPowerups(delta);
 	}
-	
+
+	private void HandleAnimation(float delta)
+	{
+		if (_velocity.x > 0)
+		{
+			_animatedSprite.FlipH = false;
+			_animatedSprite.Play("run");
+		} else if (_velocity.x < 0)
+		{
+			_animatedSprite.FlipH = true;
+			_animatedSprite.Play("run");
+		}
+		else
+		{
+			_animatedSprite.Play("idle");
+		}
+	}
+
 	public void GiveHaste()
 	{
-		HasHaste = true;
+		_hasHaste = true;
 		_hasteTimer = 5;
 	}
 	
 	public void GiveInvisibility()
 	{
-		(FindNode("Sprite") as Sprite).Hide();
-		(FindNode("Light2D") as Light2D).Hide();
-		HasInvisibility = true;
+		_animatedSprite.Hide();
+		_light.Hide();
+		_hasInvisibility = true;
 		_invisibilityTimer = 5;
 	}
 
 	private void HandleMovement(float delta)
 	{
-		float maxSpeed = HasHaste ? BaseMaxSpeed * 2 : BaseMaxSpeed;
-		float walkForce = HasHaste ? BaseWalkForce * 2 : BaseWalkForce;
-		float stopForce = HasHaste ? BaseStopForce * 2 : BaseStopForce;
+		float maxSpeed = _hasHaste ? BaseMaxSpeed * 2 : BaseMaxSpeed;
+		float walkForce = _hasHaste ? BaseWalkForce * 2 : BaseWalkForce;
+		float stopForce = _hasHaste ? BaseStopForce * 2 : BaseStopForce;
 		float walk = walkForce * (Input.GetActionStrength(MoveRightAction) - Input.GetActionStrength(MoveLeftAction));
 		if (Mathf.Abs(walk) < walkForce * 0.2)
 		{
@@ -76,15 +100,15 @@ public class Player : KinematicBody2D
 		
 		if (_hasteTimer <= 0)
 		{
-			HasHaste = false;
+			_hasHaste = false;
 			_hasteTimer = 0;
 		}
 		
 		if (_invisibilityTimer <= 0)
 		{
-			HasInvisibility = false;
-			(FindNode("Sprite") as Sprite).Show();
-			(FindNode("Light2D") as Light2D).Show();
+			_hasInvisibility = false;
+			_animatedSprite.Show();
+			_light.Show();
 			_invisibilityTimer = 0;
 		}
 	}
