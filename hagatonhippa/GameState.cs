@@ -22,9 +22,9 @@ public class GameState : Node2D
 	
 	public void changeHippa() {
 		if (!isHippaFreeze) {
-			GD.Print("New hippa is " + hippaPlayer);
- 			hippaPlayer = (hippa)((int)hippaPlayer*-1);
 			freezeTimer = freezeTime;
+			hippaPlayer = (hippa)((int)hippaPlayer*-1);
+			GD.Print("New hippa is " + hippaPlayer);
 		}
 	}
 	
