@@ -3,7 +3,7 @@ using System;
 
 public class PowerupFactory : Node
 {
-	[Export] public float SpawnRate = 15;
+	[Export] public float SpawnRate = 10;
 	private PackedScene doubleJumpRes;
 	private PackedScene hasteRes;
 	private PackedScene invisibilityRes;
@@ -37,9 +37,6 @@ public class PowerupFactory : Node
 		int posX = rnd.Next(64, 544);
 		int posY = rnd.Next(64, 544);
 		Vector2 randomPosition = new Vector2(posX, posY);
-		GD.Print("spawning");
-		GD.Print(randomPosition);
-		GD.Print(index);
 		switch(index)
 		{
 			case 0:

@@ -24,7 +24,6 @@ public class GameState : Node2D
 		if (!isHippaFreeze) {
 			freezeTimer = freezeTime;
 			hippaPlayer = (hippa)((int)hippaPlayer*-1);
-			GD.Print("New hippa is " + hippaPlayer);
 		}
 	}
 	
@@ -35,7 +34,6 @@ public class GameState : Node2D
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
-		GD.Print("Start Game Engine");
 		progress = 0;
 		// for testing
 		hippaPlayer = hippa.player1;
@@ -44,7 +42,6 @@ public class GameState : Node2D
 	public override void _Process(float delta)
 	{
 		if (isHippaFreeze) {
-			GD.Print("Freeze left:" + freezeTimer);
 			freezeTimer -= delta;
 		}
 		progress += delta * progressPerSec * (int)hippaPlayer;
