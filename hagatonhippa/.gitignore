@@ -7,3 +7,6 @@
 # Mono-specific ignores
 .mono/
 data_*/
+
+# linux build files
+*.pck
